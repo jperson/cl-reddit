@@ -28,5 +28,38 @@
 ;;;; package.lisp
 
 (defpackage #:cl-reddit
-  (:use #:cl))
+  (:use #:cl #:asdf)
+  (:export #:api-login
+           #:api-me
+           #:api-subscribe
+           #:get-user
+           #:get-about-user
+           #:get-message
+           #:get-subscribed
+           #:get-comments
+           #:api-comment
+           #:api-editusrtext
+           #:api-vote
+           #:api-save
+           #:api-unsave
+           #:api-report
+           #:api-marknsfw
+           #:api-hide
+           #:api-unhide
+           #:api-del
+           #:api-block
+           #:api-read-message
+           #:api-unread-message
+           #:api-approve
+           #:api-leave-contributor
+           #:api-leave-moderator
+           #:api-remove
+           #:api-setflairenabled
+           #:get-reddit
+           #:get-subreddit
+           #:get-subreddit-new
+           #:get-subreddit-top
+           #:get-subreddit-about
+           #:get-search)
+  (:documentation "Reddit api wrapper."))
 

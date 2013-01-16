@@ -136,7 +136,7 @@
   "Hide thing with id."
   (api-generic (format nil "~a/api/hide.json" *reddit*) usr id))
 
-(defun api-hide (usr id)
+(defun api-unhide (usr id)
   "Unhide thing with id."
   (api-generic (format nil "~a/api/unhide.json" *reddit*) usr id))
 
