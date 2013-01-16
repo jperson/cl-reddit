@@ -1,0 +1,414 @@
+;; Copyright (c) 2012, Jason R. Person
+;; All rights reserved.
+;;
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met: 
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer. 
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution. 
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;
+;; The views and conclusions contained in the software and documentation are those
+;; of the authors and should not be interpreted as representing official policies, 
+;; either expressed or implied, of the FreeBSD Project.
+
+
+;;;; datatypes.lisp
+(in-package #:cl-reddit)
+
+;; Base classes
+(defclass Thing ()
+  ((id      
+    :initarg :id :initform "" :accessor id :type string
+     :documentation "This item's identifiler, e.g. 8xwlg")
+   (name    
+    :initarg :name :initform "" :accessor name :type string
+     :documentation "Fullname of comment, e.g. t1_c3v7f8u")
+   (kind    
+    :initarg :kind :initform "" :accessor kind :type string
+     :documentation "String identifier that denotes the object's type")
+   (data    
+     :initarg :data :initform nil :accessor data
+     :documentation "Custom data structure")))
+
+(defclass Listing ()
+  ((before  
+     :initarg :before :initform "" :accessor before :type string
+     :documentation "The fullname of the listing that follows before this page")
+   (after   
+     :initarg :after :initform "" :accessor after :type string
+     :documentation "The fullname of the listing that follows after this page")
+   (modhash 
+     :initarg :modhash :initform "" :accessor modhash :type string
+     :documentation "Modhash value for this listing")
+   (children
+     :initarg :children :initform nil :accessor children
+     :documentation "A list of things that this listing wraps")))
+
+(defclass Volatile ()
+  ((ups     
+     :initarg :ups :initform 0 :accessor ups :type integer
+     :documentation "The number of upvotes")
+   (downs   
+     :initarg :downs :initform 0 :type integer
+     :documentation "The number of downvotes")
+   (likes   
+     :initarg :likes :initform nil :accessor likes
+     :documentation "True if liked by user, false if disliked, nil if user neutral")))
+
+(defclass Created ()
+  ((created     
+     :initarg :created :initform 0 :accessor created)
+   (created_utc 
+     :initarg :created_utc :initform 0 :accessor created_utc)))
+
+;; Datastructures
+(defclass Comment (Volatile Created)
+  ((id
+     :initarg :id :initform "" :accessor id :type string
+     :documentation "The id of the comment.")
+   (name
+     :initarg :name :initform "" :accessor name :type string
+     :documentation "The name of the comment.")
+   (author 
+     :initarg :author :initform nil :accessor author :type string
+     :documentation "The account name of the poster")
+   (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor author_flair_css_class :type string
+     :documentation "The css class of the author's flair")
+   (author_flair_text :initarg :author_flair_text :initform "" :accessor author_flair_text :type string
+     :documentation "The text of the author's flair")
+   (body :initarg :body :initform "" :accessor body :type string
+     :documentation "The raw text")
+   (body_html :initarg :body_html :initform "" :accessor body_html :type string
+     :documentation "The formatted html text")
+   (link_id 
+     :initarg :link_id :initform "" :accessor link_id :type string)
+   (parent_id 
+     :initarg :parent_id :initform "" :accessor parent_id :type string)
+   (subreddit 
+     :initarg :subreddit :initform "" :accessor subreddit :type string)
+   (subreddit_id 
+     :initarg :subreddit_id :initform "" :accessor subreddit_id :type string)
+   (replies
+     :initarg :replies :initform nil :accessor replies
+     :documentation "Comment replies."
+     )))
+
+(defclass Link (Volatile Created)
+ ((id
+    :initarg :id :initform "" :accessor id :type string
+    :documentation "The id of this link")
+  (name
+    :initarg :name :initform "" :accessor name :type string
+    :documentation "The name of this link.")
+  (author
+    :initarg :author :initform "" :accessor author :type string
+    :documentation "The account name of the poster")
+  (author_flair_css_class :initarg author_flair_css_class :initform "" :accessor author_flair_css_class :type string
+    :documentation "The css class of the author's flair")
+  (author_flair_text :initarg :author_flair_text :initform "" :accessor author_flair_text :type string
+    :documentation "The text of the author's flair")
+  (clicked :initarg :clicked :initform nil :accessor clicked :type boolean
+    :documentation "Probably always returns false")
+  (domain :initarg :domain :initform "" :accessor domain :type string
+    :documentation "The domain of this link")
+  (hidden :initarg :hidden :initform nil :accessor hidden :type boolean
+    :documentation "True if the post is hidden by the logged in user. False if not logged in or not hidden")
+  (is_self :initarg :is_self :initform nil :accessor is_self :type boolean
+    :documentation "True if this link is a selfpost")
+  (media :initarg :media :initform nil :accessor media
+    :documentation "unknown")
+  (media_embed :initarg :media_embed :initform nil :accessor media_embed
+    :documentation "unknown")
+  (num_comments :initarg :num_comments :initform 0 :accessor num_comments :type integer
+    :documentation "The number of comments that belong to this link")
+  (over_18 :initarg :over_18 :initform nil :accessor over_18 :type boolean
+    :documentation "True if the post is taggeed as NSFW. Nil otherwise")
+  (permalink :initarg :permalink :initform "" :accessor permalink :type string
+    :documentation "Relative url of the permanent link for this link")
+  (saved :initarg :saved :initform nil :accessor saved :type boolean
+    :documentation "True if this post is saved by the logged in user")
+  (score
+    :initarg :score :initform 0 :accessor score :type integer
+    :documentation "The net-score of the link")
+  (selftext
+    :initarg :selftext :initform "" :accessor selftext :type string
+    :documentation "The raw text")
+  (selfttext_html :initarg :selftext_html :initform "" :accessor selftext_html :type string
+    :documentation "The formatted escaped html text")
+  (subreddit 
+    :initarg :subreddit :initform "" :accessor subreddit :type string)
+  (subreddit_id 
+    :initarg :subreddit_id :initform "" :accessor subreddit_id :type string)
+  (thumbnail :initarg :thumbnail :initform "" :accessor thumbnail :type string
+    :documentation "Full url to the thumbnail for this link")
+  (title 
+    :initarg :title :initform "" :accessor title :type string)
+  (url 
+    :initarg :url :initform "" :accessor url :type string
+    :documentation "The link of this post")
+  (edited :initarg :edited :initform 0 :accessor edited :type integer
+    :documentation "Indicates if link has been edited")))
+
+(defclass Subreddit (Created)
+ ((name 
+    :initarg :name :initform "" :accessor name :type string)
+  (id 
+    :initarg :id :initform "" :accessor id :type string)
+  (display_name 
+    :initarg :display_name :initform "" :accessor display_name :type string)
+  (subscribers 
+    :initarg :subscribers :initform 0 :accessor subscribers :type integer
+    :documentation "The number of users subscribed to this subreddit")
+  (header_size 
+    :initarg :header_size :initform 0 :accessor header_size :type integer)
+  (over18 
+    :initarg :over18 :initform nil :accessor over18 :type boolean)
+  (accounts_active 
+    :initarg :accounts_active :initform 0 :accessor accounts_active :type integer)
+  (public_description 
+    :initarg :public_description :initform "" :accessor public_description :type string)
+  (description 
+    :initarg :description :initform "" :accessor description :type string)
+  (description_html 
+    :initarg :description_html :initform "" :accessor description_html :type string)
+  (header_title 
+    :initarg :header_title :initform "" :accessor header_title :type string)
+  (header_img 
+    :initarg :header_img :initform "" :accessor header_img :type string)
+  (title 
+    :initarg :title :initform "" :accessor title :type string)
+  (url 
+    :initarg :url :initform "" :accessor url :type string
+    :documentation "The relative URL of the subreddit")))
+
+(defclass Message (Created)
+ ((author
+    :initarg :author :initform "" :accessor author :type string)
+  (body
+    :initarg :body :initform "" :accessor body :type string)
+  (body_html
+    :initarg :body_html :initform "" :accessor body_html :type string)
+  (context
+    :initarg :context :initform "" :accessor context :type string)
+  (first_message
+    :initarg :first_message :initform nil :accessor first_message)
+  (name
+    :initarg :name :initform "" :accessor name :type string)
+  (new
+    :initarg :new :initform nil :accessor new :type boolean)
+  (parent_id
+    :initarg :parent_id :initform "" :accessor parent_id :type string)
+  (replies
+    :initarg :replies :initform "" :accessor replies :type string)
+  (subject
+    :initarg :subject :initform "" :accessor subject :type string)
+  (subreddit
+    :initarg :subreddit :initform "" :accessor subreddit :type string)
+  (was_comment
+    :initarg :was_comment :initform nil :accessor was_comment :type boolean)))
+
+(defclass Account ()
+ ((comment_karma
+    :initarg :comment_karma :initform 0 :accessor comment_karma :type integer)
+  (created
+    :initarg :created :initform 0 :accessor created :type integer)
+  (created_utc
+    :initarg :created_utc :initform 0 :accessor created_utc :type integer)
+  (has_mail
+    :initarg :has_mail :initform nil :accessor has_mail :type boolean)
+  (has_mod_mail
+    :initarg :has_mod_mail :initform nil :accessor has_mod_mail :type boolean)
+  (id
+    :initarg :id :initform "" :accessor id :type string)
+  (is_gold
+    :initarg :is_gold :initform nil :accessor is_gold :type boolean)
+  (is_mod
+    :initarg :is_mod :initform nil :accessor is_mod :type boolean)
+  (link_karma
+    :initarg :link_karma :initform 0 :accessor link_karma :type integer)
+  (modhash
+    :initarg :modhash :initform "" :accessor modhash :type string)
+  (name
+    :initarg :name :initform "" :accessor name :type string)))
+
+(defclass More ()
+  ((cnt
+     :initarg :cnt :initform 0 :accessor cnt :type integer)
+   (parent_id
+     :initarg :parent_id :initform "" :accessor parent_id :type string)
+   (id
+     :initarg :id :initform "" :accessor id :type string)
+   (name
+     :initarg :name :initform "" :accessor name :type string)
+   (children
+     :initarg :children :initform nil :accessor children)))
+
+;; User class
+(defclass User ()
+  ((cookie
+     :initarg :cookie :initform nil :accessor cookie)
+   (password
+     :initarg :password :initform nil :accessor password)
+   (username
+     :initarg :username :initform nil :accessor username)
+   (modhash
+     :initarg :modhash :initform nil :accessor modhash)
+   (logged-in
+     :initarg :logged-in :initform nil :accessor logged-in)))
+
+;; json to thing constructors
+(defun link-from-json (json)
+  (make-instance
+    'Link
+    :id (gethash "id" json)
+    :name (gethash "name" json)
+    :ups (gethash "ups" json)
+    :downs (gethash "downs" json)
+    :likes (gethash "likes" json)
+    :created (gethash "created" json)
+    :created_utc (gethash "created_utc" json)
+    :author (gethash "author" json)
+    ;:author_flair_css_class (gethash "author_flair_css_class" json)
+    :author_flair_text (gethash "author_flair_text" json)
+    :clicked (gethash "clicked" json)
+    :domain (gethash "domain" json)
+    :hidden (gethash "hidden" json)
+    :is_self (gethash "is_self" json)
+    :media (gethash "media" json)
+    :media_embed (gethash "media_embed" json)
+    :num_comments (gethash "num_comments" json)
+    :over_18 (gethash "over_18" json)
+    :permalink (gethash "permalink" json)
+    :saved (gethash "saved" json)
+    :score (gethash "score" json)
+    :selftext (gethash "selftext" json)
+    :selftext_html (gethash "selftext_html" json)
+    :subreddit (gethash "subreddit" json)
+    :subreddit_id (gethash "subreddit_id" json)
+    :thumbnail (gethash "thumbnail" json)
+    :title (gethash "title" json)
+    :url (gethash "url" json)
+    :edited (gethash "edited" json)))
+
+(defun subreddit-from-json (json)
+  (make-instance
+    'Subreddit
+    :name (gethash "name" json)
+    :id (gethash "id" json)
+    :display_name (gethash "display_name" json)
+    :subscribers (gethash "subscribers" json)
+    :header_size (gethash "header_size" json)
+    :over18 (gethash "over18" json)
+    :accounts_active (gethash "accounts_active" json)
+    :public_description (gethash "public_description" json)
+    :created_utc (gethash "created_utc" json)
+    :created (gethash "created" json)
+    :url (gethash "url" json)
+    :title (gethash "title" json)
+    :description_html (gethash "description_html" json)
+    :description (gethash "description" json)
+    :header_title (gethash "header_title" json)
+    :header_img (gethash "header_img" json)))
+
+(defun comment-from-json (json)
+  (let ((replies (gethash "replies" json)))
+    (make-instance
+      'Comment
+      :id (gethash "id" json)
+      :name (gethash "name" json)
+      :ups (gethash "ups" json)
+      :downs (gethash "downs" json)
+      :likes (gethash "lieks" json)
+      :author (gethash "author" json)
+      :author_flair_css_class (gethash "author_flair_css_class" json)
+      :author_flair_text (gethash "author_flair_text" json)
+      :body (gethash "body" json)
+      :body_html (gethash "body_html" json)
+      :link_id (gethash "link_id" json)
+      :parent_id (gethash "parent_id" json)
+      :subreddit (gethash "subreddit" json)
+      :subreddit_id (gethash "subreddit_id" json)
+      :replies (if (typep replies 'HASH-TABLE) 
+                 (children (parse-json (gethash "replies" json)))
+                 nil))))
+;      :replies replies)))
+      ;:replies (first (children (parse-json (gethash "replies" json)))))))
+
+(defun account-from-json (json)
+  (make-instance
+    'Account
+    :comment_karma (gethash "comment_karma" json)
+    :created (gethash "created" json)
+    :created_utc (gethash "created_utc" json)
+    :has_mail (gethash "has_mail" json)
+    :has_mod_mail (gethash "has_mod_mail" json)
+    :id (gethash "id" json)
+    :is_gold (gethash "is_gold" json)
+    :is_mod (gethash "is_mod" json)
+    :link_karma (gethash "link_karma" json)
+    :modhash (gethash "modhash" json)
+    :name (gethash "name" json)))
+
+(defun message-from-json (json)
+  (make-instance
+    'Message
+    :author (gethash "author" json)
+    :body (gethash "body" json)
+    :body_html (gethash "body_html" json)
+    :context (gethash "context" json)
+    :first_message (gethash "first_message" json)
+    :name (gethash "name" json)
+    :new (gethash "new" json)
+    :parent_id (gethash "parent_id" json)
+    :replies (gethash "replies" json)
+    :subject (gethash "subject" json)
+    :subreddit (gethash "subreddit" json)
+    :was_comment (gethash "was_comment" json)))
+
+(defun listing-from-json (json)
+  (make-instance 
+    'Listing 
+    :before (gethash "before" json)
+    :after (gethash "after" json)
+    :modhash (gethash "modhash" json)
+    :children (map 'list #'parse-json (gethash "children" json))))
+
+(defun more-from-json (json)
+  (make-instance 
+    'More
+    :cnt (gethash "count" json)
+    :parent_id (gethash "parent_id" json)
+    :id (gethash "id" json)
+    :name (gethash "name" json)
+    :children (gethash "children" json)))
+
+(defun parse-json (data)
+  (labels ((thing-from-json (json)
+               (let ((kind (gethash "kind" json))
+                     (data (gethash "data" json)))
+                 (alexandria:switch (kind :test #'EQUAL) 
+                   ("t1" (comment-from-json data))
+                   ("t2" (account-from-json data))
+                   ("t3" (link-from-json data))
+                   ("t4" (message-from-json data))
+                   ("t5" (subreddit-from-json data))
+                   ("Listing" (listing-from-json data))
+                   ("more" (more-from-json data))
+                   (otherwise (make-instance 'Thing :kind kind :data data))))))
+    (if (listp data) 
+      (loop for d in data collect (thing-from-json d)) 
+      (thing-from-json data))))
