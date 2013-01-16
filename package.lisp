@@ -60,6 +60,18 @@
            #:get-subreddit-new
            #:get-subreddit-top
            #:get-subreddit-about
-           #:get-search)
+           #:get-search
+           :thing
+           :listing
+           :volatile
+           :created
+           :comment
+           :link
+           :subreddit
+           :message
+           :account
+           :more
+           :user
+           )
   (:documentation "Reddit api wrapper."))
 
