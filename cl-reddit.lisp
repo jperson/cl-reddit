@@ -230,7 +230,7 @@
     (when syntax (push `("syntax" . ,syntax) params))
     (when sort (push `("sort" . ,sort) params))
     (when show (push `("show" . ,show) params))
-    (when restrict_sr (push `("restrict_sr" . ,restrict_sr) params))
+    (when restrict_sr (push `("restrict_sr" . "1") params))
     (when limit (push `("limit" . ,limit) params))
     (when count (push `("count" . ,count) params))
     (when before (push `("before" . ,before) params))
