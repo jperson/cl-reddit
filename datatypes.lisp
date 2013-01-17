@@ -32,243 +32,243 @@
 ;; Base classes
 (defclass Thing ()
   ((id      
-    :initarg :id :initform "" :accessor id :type string
+    :initarg :id :initform "" :accessor thing-id :type string
      :documentation "This item's identifiler, e.g. 8xwlg")
    (name    
-    :initarg :name :initform "" :accessor name :type string
+    :initarg :name :initform "" :accessor thing-name :type string
      :documentation "Fullname of comment, e.g. t1_c3v7f8u")
    (kind    
-    :initarg :kind :initform "" :accessor kind :type string
+    :initarg :kind :initform "" :accessor thing-kind :type string
      :documentation "String identifier that denotes the object's type")
    (data    
-     :initarg :data :initform nil :accessor data
+     :initarg :data :initform nil :accessor thing-data
      :documentation "Custom data structure")))
 
 (defclass Listing ()
   ((before  
-     :initarg :before :initform "" :accessor before :type string
+     :initarg :before :initform "" :accessor listing-before :type string
      :documentation "The fullname of the listing that follows before this page")
    (after   
-     :initarg :after :initform "" :accessor after :type string
+     :initarg :after :initform "" :accessor listing-after :type string
      :documentation "The fullname of the listing that follows after this page")
    (modhash 
-     :initarg :modhash :initform "" :accessor modhash :type string
+     :initarg :modhash :initform "" :accessor listing-modhash :type string
      :documentation "Modhash value for this listing")
    (children
-     :initarg :children :initform nil :accessor children
+     :initarg :children :initform nil :accessor listing-children
      :documentation "A list of things that this listing wraps")))
 
 (defclass Volatile ()
   ((ups     
-     :initarg :ups :initform 0 :accessor ups :type integer
+     :initarg :ups :initform 0 :accessor volatile-ups :type integer
      :documentation "The number of upvotes")
    (downs   
-     :initarg :downs :initform 0 :type integer
+     :initarg :downs :initform 0 :accessor volatile-downs :type integer
      :documentation "The number of downvotes")
    (likes   
-     :initarg :likes :initform nil :accessor likes
+     :initarg :likes :initform nil :accessor volatile-likes
      :documentation "True if liked by user, false if disliked, nil if user neutral")))
 
 (defclass Created ()
   ((created     
-     :initarg :created :initform 0 :accessor created)
+     :initarg :created :initform 0 :accessor created-created)
    (created_utc 
-     :initarg :created_utc :initform 0 :accessor created_utc)))
+     :initarg :created_utc :initform 0 :accessor created-created_utc)))
 
 ;; Datastructures
 (defclass Comment (Volatile Created)
   ((id
-     :initarg :id :initform "" :accessor id :type string
+     :initarg :id :initform "" :accessor comment-id :type string
      :documentation "The id of the comment.")
    (name
-     :initarg :name :initform "" :accessor name :type string
+     :initarg :name :initform "" :accessor comment-name :type string
      :documentation "The name of the comment.")
    (author 
-     :initarg :author :initform nil :accessor author :type string
+     :initarg :author :initform nil :accessor comment-author :type string
      :documentation "The account name of the poster")
-   (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor author_flair_css_class :type string
+   (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor comment-author_flair_css_class :type string
      :documentation "The css class of the author's flair")
-   (author_flair_text :initarg :author_flair_text :initform "" :accessor author_flair_text :type string
+   (author_flair_text :initarg :author_flair_text :initform "" :accessor comment-author_flair_text :type string
      :documentation "The text of the author's flair")
-   (body :initarg :body :initform "" :accessor body :type string
+   (body :initarg :body :initform "" :accessor comment-body :type string
      :documentation "The raw text")
-   (body_html :initarg :body_html :initform "" :accessor body_html :type string
+   (body_html :initarg :body_html :initform "" :accessor comment-body_html :type string
      :documentation "The formatted html text")
    (link_id 
-     :initarg :link_id :initform "" :accessor link_id :type string)
+     :initarg :link_id :initform "" :accessor comment-link_id :type string)
    (parent_id 
-     :initarg :parent_id :initform "" :accessor parent_id :type string)
+     :initarg :parent_id :initform "" :accessor comment-parent_id :type string)
    (subreddit 
-     :initarg :subreddit :initform "" :accessor subreddit :type string)
+     :initarg :subreddit :initform "" :accessor comment-subreddit :type string)
    (subreddit_id 
-     :initarg :subreddit_id :initform "" :accessor subreddit_id :type string)
+     :initarg :subreddit_id :initform "" :accessor comment-subreddit_id :type string)
    (replies
-     :initarg :replies :initform nil :accessor replies
+     :initarg :replies :initform nil :accessor comment-replies
      :documentation "Comment replies."
      )))
 
 (defclass Link (Volatile Created)
  ((id
-    :initarg :id :initform "" :accessor id :type string
+    :initarg :id :initform "" :accessor link-id :type string
     :documentation "The id of this link")
   (name
-    :initarg :name :initform "" :accessor name :type string
+    :initarg :name :initform "" :accessor link-name :type string
     :documentation "The name of this link.")
   (author
-    :initarg :author :initform "" :accessor author :type string
+    :initarg :author :initform "" :accessor link-author :type string
     :documentation "The account name of the poster")
-  (author_flair_css_class :initarg author_flair_css_class :initform "" :accessor author_flair_css_class :type string
+  (author_flair_css_class :initarg author_flair_css_class :initform "" :accessor link-author_flair_css_class :type string
     :documentation "The css class of the author's flair")
-  (author_flair_text :initarg :author_flair_text :initform "" :accessor author_flair_text :type string
+  (author_flair_text :initarg :author_flair_text :initform "" :accessor link-author_flair_text :type string
     :documentation "The text of the author's flair")
-  (clicked :initarg :clicked :initform nil :accessor clicked :type boolean
+  (clicked :initarg :clicked :initform nil :accessor link-clicked :type boolean
     :documentation "Probably always returns false")
-  (domain :initarg :domain :initform "" :accessor domain :type string
+  (domain :initarg :domain :initform "" :accessor link-domain :type string
     :documentation "The domain of this link")
-  (hidden :initarg :hidden :initform nil :accessor hidden :type boolean
+  (hidden :initarg :hidden :initform nil :accessor link-hidden :type boolean
     :documentation "True if the post is hidden by the logged in user. False if not logged in or not hidden")
-  (is_self :initarg :is_self :initform nil :accessor is_self :type boolean
+  (is_self :initarg :is_self :initform nil :accessor link-is_self :type boolean
     :documentation "True if this link is a selfpost")
-  (media :initarg :media :initform nil :accessor media
+  (media :initarg :media :initform nil :accessor link-media
     :documentation "unknown")
-  (media_embed :initarg :media_embed :initform nil :accessor media_embed
+  (media_embed :initarg :media_embed :initform nil :accessor link-media_embed
     :documentation "unknown")
-  (num_comments :initarg :num_comments :initform 0 :accessor num_comments :type integer
+  (num_comments :initarg :num_comments :initform 0 :accessor link-num_comments :type integer
     :documentation "The number of comments that belong to this link")
-  (over_18 :initarg :over_18 :initform nil :accessor over_18 :type boolean
+  (over_18 :initarg :over_18 :initform nil :accessor link-over_18 :type boolean
     :documentation "True if the post is taggeed as NSFW. Nil otherwise")
-  (permalink :initarg :permalink :initform "" :accessor permalink :type string
+  (permalink :initarg :permalink :initform "" :accessor link-permalink :type string
     :documentation "Relative url of the permanent link for this link")
-  (saved :initarg :saved :initform nil :accessor saved :type boolean
+  (saved :initarg :saved :initform nil :accessor link-saved :type boolean
     :documentation "True if this post is saved by the logged in user")
   (score
-    :initarg :score :initform 0 :accessor score :type integer
+    :initarg :score :initform 0 :accessor link-score :type integer
     :documentation "The net-score of the link")
   (selftext
-    :initarg :selftext :initform "" :accessor selftext :type string
+    :initarg :selftext :initform "" :accessor link-selftext :type string
     :documentation "The raw text")
-  (selfttext_html :initarg :selftext_html :initform "" :accessor selftext_html :type string
+  (selfttext_html :initarg :selftext_html :initform "" :accessor link-selftext_html :type string
     :documentation "The formatted escaped html text")
   (subreddit 
-    :initarg :subreddit :initform "" :accessor subreddit :type string)
+    :initarg :subreddit :initform "" :accessor link-subreddit :type string)
   (subreddit_id 
-    :initarg :subreddit_id :initform "" :accessor subreddit_id :type string)
-  (thumbnail :initarg :thumbnail :initform "" :accessor thumbnail :type string
+    :initarg :subreddit_id :initform "" :accessor link-subreddit_id :type string)
+  (thumbnail :initarg :thumbnail :initform "" :accessor link-thumbnail :type string
     :documentation "Full url to the thumbnail for this link")
   (title 
-    :initarg :title :initform "" :accessor title :type string)
+    :initarg :title :initform "" :accessor link-title :type string)
   (url 
-    :initarg :url :initform "" :accessor url :type string
+    :initarg :url :initform "" :accessor link-url :type string
     :documentation "The link of this post")
-  (edited :initarg :edited :initform 0 :accessor edited :type integer
+  (edited :initarg :edited :initform 0 :accessor link-edited :type integer
     :documentation "Indicates if link has been edited")))
 
 (defclass Subreddit (Created)
  ((name 
-    :initarg :name :initform "" :accessor name :type string)
+    :initarg :name :initform "" :accessor subreddit-name :type string)
   (id 
-    :initarg :id :initform "" :accessor id :type string)
+    :initarg :id :initform "" :accessor subreddit-id :type string)
   (display_name 
-    :initarg :display_name :initform "" :accessor display_name :type string)
+    :initarg :display_name :initform "" :accessor subreddit-display_name :type string)
   (subscribers 
-    :initarg :subscribers :initform 0 :accessor subscribers :type integer
+    :initarg :subscribers :initform 0 :accessor subreddit-subscribers :type integer
     :documentation "The number of users subscribed to this subreddit")
   (header_size 
-    :initarg :header_size :initform 0 :accessor header_size :type integer)
+    :initarg :header_size :initform 0 :accessor subreddit-header_size :type integer)
   (over18 
-    :initarg :over18 :initform nil :accessor over18 :type boolean)
+    :initarg :over18 :initform nil :accessor subreddit-over18 :type boolean)
   (accounts_active 
-    :initarg :accounts_active :initform 0 :accessor accounts_active :type integer)
+    :initarg :accounts_active :initform 0 :accessor subreddit-accounts_active :type integer)
   (public_description 
-    :initarg :public_description :initform "" :accessor public_description :type string)
+    :initarg :public_description :initform "" :accessor subreddit-public_description :type string)
   (description 
-    :initarg :description :initform "" :accessor description :type string)
+    :initarg :description :initform "" :accessor subreddit-description :type string)
   (description_html 
-    :initarg :description_html :initform "" :accessor description_html :type string)
+    :initarg :description_html :initform "" :accessor subreddit-description_html :type string)
   (header_title 
-    :initarg :header_title :initform "" :accessor header_title :type string)
+    :initarg :header_title :initform "" :accessor subreddit-header_title :type string)
   (header_img 
-    :initarg :header_img :initform "" :accessor header_img :type string)
+    :initarg :header_img :initform "" :accessor subreddit-header_img :type string)
   (title 
-    :initarg :title :initform "" :accessor title :type string)
+    :initarg :title :initform "" :accessor subreddit-title :type string)
   (url 
-    :initarg :url :initform "" :accessor url :type string
+    :initarg :url :initform "" :accessor subreddit-url :type string
     :documentation "The relative URL of the subreddit")))
 
 (defclass Message (Created)
  ((author
-    :initarg :author :initform "" :accessor author :type string)
+    :initarg :author :initform "" :accessor message-author :type string)
   (body
-    :initarg :body :initform "" :accessor body :type string)
+    :initarg :body :initform "" :accessor message-body :type string)
   (body_html
-    :initarg :body_html :initform "" :accessor body_html :type string)
+    :initarg :body_html :initform "" :accessor message-body_html :type string)
   (context
-    :initarg :context :initform "" :accessor context :type string)
+    :initarg :context :initform "" :accessor message-context :type string)
   (first_message
-    :initarg :first_message :initform nil :accessor first_message)
+    :initarg :first_message :initform nil :accessor message-first_message)
   (name
-    :initarg :name :initform "" :accessor name :type string)
+    :initarg :name :initform "" :accessor message-name :type string)
   (new
-    :initarg :new :initform nil :accessor new :type boolean)
+    :initarg :new :initform nil :accessor message-new :type boolean)
   (parent_id
-    :initarg :parent_id :initform "" :accessor parent_id :type string)
+    :initarg :parent_id :initform "" :accessor message-parent_id :type string)
   (replies
-    :initarg :replies :initform "" :accessor replies :type string)
+    :initarg :replies :initform "" :accessor message-replies :type string)
   (subject
-    :initarg :subject :initform "" :accessor subject :type string)
+    :initarg :subject :initform "" :accessor message-subject :type string)
   (subreddit
-    :initarg :subreddit :initform "" :accessor subreddit :type string)
+    :initarg :subreddit :initform "" :accessor message-subreddit :type string)
   (was_comment
-    :initarg :was_comment :initform nil :accessor was_comment :type boolean)))
+    :initarg :was_comment :initform nil :accessor message-was_comment :type boolean)))
 
 (defclass Account ()
  ((comment_karma
-    :initarg :comment_karma :initform 0 :accessor comment_karma :type integer)
+    :initarg :comment_karma :initform 0 :accessor account-comment_karma :type integer)
   (created
-    :initarg :created :initform 0 :accessor created :type integer)
+    :initarg :created :initform 0 :accessor account-created :type integer)
   (created_utc
-    :initarg :created_utc :initform 0 :accessor created_utc :type integer)
+    :initarg :created_utc :initform 0 :accessor account-created_utc :type integer)
   (has_mail
-    :initarg :has_mail :initform nil :accessor has_mail :type boolean)
+    :initarg :has_mail :initform nil :accessor account-has_mail :type boolean)
   (has_mod_mail
-    :initarg :has_mod_mail :initform nil :accessor has_mod_mail :type boolean)
+    :initarg :has_mod_mail :initform nil :accessor account-has_mod_mail :type boolean)
   (id
-    :initarg :id :initform "" :accessor id :type string)
+    :initarg :id :initform "" :accessor account-id :type string)
   (is_gold
-    :initarg :is_gold :initform nil :accessor is_gold :type boolean)
+    :initarg :is_gold :initform nil :accessor account-is_gold :type boolean)
   (is_mod
-    :initarg :is_mod :initform nil :accessor is_mod :type boolean)
+    :initarg :is_mod :initform nil :accessor account-is_mod :type boolean)
   (link_karma
-    :initarg :link_karma :initform 0 :accessor link_karma :type integer)
+    :initarg :link_karma :initform 0 :accessor account-link_karma :type integer)
   (modhash
-    :initarg :modhash :initform "" :accessor modhash :type string)
+    :initarg :modhash :initform "" :accessor account-modhash :type string)
   (name
-    :initarg :name :initform "" :accessor name :type string)))
+    :initarg :name :initform "" :accessor account-name :type string)))
 
 (defclass More ()
   ((cnt
-     :initarg :cnt :initform 0 :accessor cnt :type integer)
+     :initarg :cnt :initform 0 :accessor more-count :type integer)
    (parent_id
-     :initarg :parent_id :initform "" :accessor parent_id :type string)
+     :initarg :parent_id :initform "" :accessor more-parent_id :type string)
    (id
-     :initarg :id :initform "" :accessor id :type string)
+     :initarg :id :initform "" :accessor more-id :type string)
    (name
-     :initarg :name :initform "" :accessor name :type string)
+     :initarg :name :initform "" :accessor more-name :type string)
    (children
-     :initarg :children :initform nil :accessor children)))
+     :initarg :children :initform nil :accessor more-children)))
 
 ;; User class
 (defclass User ()
   ((cookie
-     :initarg :cookie :initform nil :accessor cookie)
+     :initarg :cookie :initform nil :accessor user-cookie)
    (password
-     :initarg :password :initform nil :accessor password)
+     :initarg :password :initform nil :accessor user-password)
    (username
-     :initarg :username :initform nil :accessor username)
+     :initarg :username :initform nil :accessor user-username)
    (modhash
-     :initarg :modhash :initform nil :accessor modhash)
+     :initarg :modhash :initform nil :accessor user-modhash)
    (logged-in
-     :initarg :logged-in :initform nil :accessor logged-in)))
+     :initarg :logged-in :initform nil :accessor user-logged-in)))
 
 ;; json to thing constructors
 (defun link-from-json (json)

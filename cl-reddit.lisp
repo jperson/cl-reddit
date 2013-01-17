@@ -43,20 +43,20 @@
 (defun api-me (usr)
   "Get info for user usr.  Returns user data."
   (let ((url (format nil "~a/api/me.json" *reddit*)))
-    (with-user (usr) (get-json url :cookie-jar (cookie usr)))))
+    (with-user (usr) (get-json url :cookie-jar (user-cookie usr)))))
 
 (defun api-subscribe (usr sr &optional (action :sub))
   "Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
   (with-user (usr)
     (let ((params `(("action" . ,(case action (:sub "sub") (otherwise "unsub")))
-                    ("uh" . ,(modhash usr)) ("sr_name" . ,sr) ("api_type" . "json")))
+                    ("uh" . ,(user-modhash usr)) ("sr_name" . ,sr) ("api_type" . "json")))
           (url (format nil "~a/api/subscribe.json" *reddit*)))
-      (post-request url (cookie usr) params))))
+      (post-request url (user-cookie usr) params))))
 
 (defun get-user (r-user &optional usr)
   "Get /user/<r-user>.json.  Optional user usr."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
-    (if (null usr) (get-json url) (get-json url :cookie-jar (cookie usr)))))
+    (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))
 
 (defun get-about-user (about-user &optional usr)
   "Get /user/<about-user>/about.json.  Optional user usr."
@@ -65,13 +65,13 @@
 (defun get-message (usr where)
   "Gets messages from inbox for user usr."
   (let ((url (format nil "~a/message/~a.json" *reddit* where)))
-    (parse-json (get-json url :cookie-jar (cookie usr)))))
+    (parse-json (get-json url :cookie-jar (user-cookie usr)))))
 
 (defun get-subscribed (usr)
   "Gets subscribed subreddits"
   (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
     (with-user (usr)
-      (children (parse-json (get-json url :cookie-jar (cookie usr)))))))
+      (listing-children (parse-json (get-json url :cookie-jar (user-cookie usr)))))))
 
 (defun get-comments (id usr &key article comment context depth limit sort)
   "Gets comments for link id in subreddit sr."
@@ -84,27 +84,27 @@
     (when article (push `("article" . ,article) params))
     (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
       (with-user (usr)
-        (butlast (children (parse-json (second (get-json url :cookie-jar (cookie usr))))))))))
+        (butlast (listing-children (parse-json (second (get-json url :cookie-jar (user-cookie usr))))))))))
 
 (defun api-comment (usr id text)
   "Comments text on id with user usr."
   (with-user (usr)
     (let ((url (format nil "~a/api/comment.json" *reddit*))
           (params `(("thing_id" . ,(format nil "t3_~a" id))
-                    ("uh" . ,(modhash usr))
+                    ("uh" . ,(user-modhash usr))
                     ("text" . ,text)
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
 
 (defun api-editusrtext (usr id text)
   "Edit user text on id with user usr."
   (with-user (usr)
     (let ((url (format nil "~a/api/editusertext.json" *reddit*))
           (params `(("thing_id" . ,(format nil "t3_~a" id))
-                    ("uh" . ,(modhash usr))
+                    ("uh" . ,(user-modhash usr))
                     ("text" . ,text)
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
 
 (defun api-vote (usr id &optional (dir :up))
   "Vote direction dir for thing with id with user usr."
@@ -112,9 +112,9 @@
     (let ((url (format nil "~a/api/vote.json" *reddit*))
           (params `(("dir" . ,(case dir (:up "1") (:down "-1") (:unvote "0") (otherwise "1")))
                     ("id" . ,id)
-                    ("uh" . ,(modhash usr))
+                    ("uh" . ,(user-modhash usr))
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
 
 (defun api-save (usr id)
   "Save thing with id."
@@ -173,42 +173,42 @@
   (with-user (usr)
     (let ((url (format nil "~a/api/remove.json" *reddit*))
           (params `(("id" . ,id)
-                    ("uh" . ,(modhash usr))
+                    ("uh" . ,(user-modhash usr))
                     ("spam" . ,(if is-spam "1" "0"))
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
  
 (defun api-setflairenabled (usr &key flair-enabled)
   "Enable/disable flair."
   (with-user (usr)
     (let ((url (format nil "~a/api/setflairenabled.json" *reddit*))
-          (params `(("uh" . ,(modhash usr))
+          (params `(("uh" . ,(user-modhash usr))
                     ("flair_enabled" . ,(if flair-enabled "1" "0"))
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
 
 (defun api-generic (url usr id)
   "Generic api call to url with id and modhash."
   (with-user (usr)
     (let ((params `(("id" . ,id)
-                    ("uh" . ,(modhash usr))
+                    ("uh" . ,(user-modhash usr))
                     ("api_type" . "json"))))
-      (yason:parse (post-request url (cookie usr) params)))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
 
 ;;Listings
 (defun get-reddit (&optional usr)
   "Gets json data for reddit home page. Optional user usr."
   (let ((url (format nil "~a/.json" *reddit*)))
-    (children
+    (listing-children
       (parse-json 
-        (if (null usr) (get-json url) (get-json url :cookie-jar (cookie usr)))))))
+        (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))))
 
 (defun get-subreddit (sub &optional usr)
   "Gets json data for subreddit sub.  Optional user usr."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
-    (children 
+    (listing-children 
       (parse-json
-        (if (null usr) (get-json url) (get-json url :cookie-jar (cookie usr)))))))
+        (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))))
 
 (defun get-subreddit-new (sub &optional usr)
   "Gets json data for /r/<sub>/new. Optional user usr."
@@ -236,7 +236,7 @@
     (when before (push `("before" . ,before) params))
     (when after (push `("after" . ,after) params))
     (push `("q" . ,query) params)
-    (children
+    (listing-children
       (parse-json
         (if (null sub)
           (get-json (format nil "~a/search.json?~a" *reddit* (build-get-params params)))
