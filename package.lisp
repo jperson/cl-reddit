@@ -169,6 +169,9 @@
            #:user-username
            #:user-modhash
            #:user-logged-in
+           ;;Helpers
+           #:with-user
+           #:make-user
            )
   (:documentation "Reddit api wrapper."))
 

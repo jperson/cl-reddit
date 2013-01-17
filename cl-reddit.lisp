@@ -35,9 +35,9 @@
 ;;;; API ;;;;
 
 ;;user
-(defun api-login (username password)
+(defun api-login (&key username password)
   "Login user username with password. Returns a User object with modhash,cookie set."
-  (let ((usr (make-instance 'User :username username :password password)))
+  (let ((usr (make-user :username username :password password)))
     (with-user (usr) usr)))
 
 (defun api-me (usr)
