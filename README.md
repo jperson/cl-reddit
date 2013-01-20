@@ -19,8 +19,7 @@ Search can take several optional parameters, to search restricted to a particula
     CL-REDDIT> (defvar lst (get-search "Lance Armstrong" :sub "funny" :restrict_sr t))
     
     
-Theres lots more funcationality, see the docstrings for more info.  
-This is still a work in progress and probably will change frequently.
+See cl-reddit.lisp for full api. This is still a work in progress and probably will change frequently.
 
     
 
