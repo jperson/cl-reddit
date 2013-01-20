@@ -1,10 +1,7 @@
-# cl-reddit
+#CL-REDDIT  
 
+Common lisp reddit api wrapper
 
-### Common lisp reddit api wrapper
-
-
-####Examples
 
 **Create user and login and view user modhash**  
     
