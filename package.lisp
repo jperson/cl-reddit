@@ -172,6 +172,8 @@
            ;;Helpers
            #:with-user
            #:make-user
+           ;;user-agent
+           *user-agent*
            )
   (:documentation "Reddit api wrapper."))
 
