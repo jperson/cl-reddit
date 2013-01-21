@@ -6,6 +6,14 @@
 (defun make-user (&key username password)
   (make-instance 'User :username username :password password))
 
+(defun api-generic (url usr id)
+  "Generic api call to url with id and modhash."
+  (with-user (usr)
+    (let ((params `(("id" . ,id)
+                    ("uh" . ,(user-modhash usr))
+                    ("api_type" . "json"))))
+      (yason:parse (post-request url (user-cookie usr) params)))))
+
 ;;;; Helper macros ;;;;
 (defmacro with-user ((usr) &body body)
   "Does 'body' with logged-in user usr.  Logins in user if not logged-in."

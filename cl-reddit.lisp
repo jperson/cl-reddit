@@ -33,8 +33,6 @@
 (defparameter *reddit* "http://www.reddit.com")
 
 ;;;; API ;;;;
-
-;;user
 (defun api-login (&key username password)
   "Login user username with password. Returns a User object with modhash,cookie set."
   (let ((usr (make-user :username username :password password)))
@@ -52,39 +50,6 @@
                     ("uh" . ,(user-modhash usr)) ("sr_name" . ,sr) ("api_type" . "json")))
           (url (format nil "~a/api/subscribe.json" *reddit*)))
       (post-request url (user-cookie usr) params))))
-
-(defun get-user (r-user &optional usr)
-  "Get /user/<r-user>.json.  Optional user usr."
-  (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
-    (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))
-
-(defun get-about-user (about-user &optional usr)
-  "Get /user/<about-user>/about.json.  Optional user usr."
-  (get-user (format nil "~a/about" about-user) usr))
-
-(defun get-message (usr where)
-  "Gets messages from inbox for user usr."
-  (let ((url (format nil "~a/message/~a.json" *reddit* where)))
-    (parse-json (get-json url :cookie-jar (user-cookie usr)))))
-
-(defun get-subscribed (usr)
-  "Gets subscribed subreddits"
-  (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
-    (with-user (usr)
-      (listing-children (parse-json (get-json url :cookie-jar (user-cookie usr)))))))
-
-(defun get-comments (id usr &key article comment context depth limit sort)
-  "Gets comments for link id in subreddit sr."
-  (let ((params nil))
-    (when sort (push `("sort" . ,sort) params))
-    (when limit (push `("limit" . ,limit) params))
-    (when depth (push `("depth" . ,depth) params))
-    (when context (push `("context" . ,context) params))
-    (when comment (push `("comment" . ,comment) params))
-    (when article (push `("article" . ,article) params))
-    (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
-      (with-user (usr)
-        (butlast (listing-children (parse-json (second (get-json url :cookie-jar (user-cookie usr))))))))))
 
 (defun api-comment (usr id text)
   "Comments text on id with user usr."
@@ -187,13 +152,39 @@
                     ("api_type" . "json"))))
       (yason:parse (post-request url (user-cookie usr) params)))))
 
-(defun api-generic (url usr id)
-  "Generic api call to url with id and modhash."
-  (with-user (usr)
-    (let ((params `(("id" . ,id)
-                    ("uh" . ,(user-modhash usr))
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
+(defun get-user (r-user &optional usr)
+  "Get /user/<r-user>.json.  Optional user usr."
+  (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
+    (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))
+
+(defun get-about-user (about-user &optional usr)
+  "Get /user/<about-user>/about.json.  Optional user usr."
+  (get-user (format nil "~a/about" about-user) usr))
+
+(defun get-message (usr where)
+  "Gets messages from inbox for user usr."
+  (let ((url (format nil "~a/message/~a.json" *reddit* where)))
+    (parse-json (get-json url :cookie-jar (user-cookie usr)))))
+
+(defun get-subscribed (usr)
+  "Gets subscribed subreddits"
+  (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
+    (with-user (usr)
+      (listing-children (parse-json (get-json url :cookie-jar (user-cookie usr)))))))
+
+(defun get-comments (id usr &key article comment context depth limit sort)
+  "Gets comments for link id in subreddit sr."
+  (let ((params nil))
+    (when sort (push `("sort" . ,sort) params))
+    (when limit (push `("limit" . ,limit) params))
+    (when depth (push `("depth" . ,depth) params))
+    (when context (push `("context" . ,context) params))
+    (when comment (push `("comment" . ,comment) params))
+    (when article (push `("article" . ,article) params))
+    (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
+      (with-user (usr)
+        (butlast (listing-children (parse-json (second (get-json url :cookie-jar (user-cookie usr))))))))))
+
 
 ;;Listings
 (defun get-reddit (&optional usr)
