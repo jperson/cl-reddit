@@ -63,17 +63,17 @@
            #:get-subreddit-about
            #:get-search
            ;;Datatypes
-           :Thing
-           :Listing
-           :Volatile
-           :Created
-           :Comment
-           :Link
-           :Subreddit
-           :Message
-           :Account
-           :More
-           :User
+           :thing
+           :listing
+           :volatile
+           :created
+           :comment
+           :link
+           :subreddit
+           :message
+           :account
+           :more
+           :user
            ;;Accessors
            #:thing-id
            #:thing-name

@@ -30,7 +30,7 @@
 (in-package #:cl-reddit)
 
 ;; Base classes
-(defclass Thing ()
+(defclass thing ()
   ((id      
     :initarg :id :initform "" :accessor thing-id :type string
      :documentation "This item's identifiler, e.g. 8xwlg")
@@ -44,7 +44,7 @@
      :initarg :data :initform nil :accessor thing-data
      :documentation "Custom data structure")))
 
-(defclass Listing ()
+(defclass listing ()
   ((before  
      :initarg :before :initform "" :accessor listing-before :type string
      :documentation "The fullname of the listing that follows before this page")
@@ -58,7 +58,7 @@
      :initarg :children :initform nil :accessor listing-children
      :documentation "A list of things that this listing wraps")))
 
-(defclass Volatile ()
+(defclass volatile ()
   ((ups     
      :initarg :ups :initform 0 :accessor volatile-ups :type integer
      :documentation "The number of upvotes")
@@ -69,14 +69,14 @@
      :initarg :likes :initform nil :accessor volatile-likes
      :documentation "True if liked by user, false if disliked, nil if user neutral")))
 
-(defclass Created ()
+(defclass created ()
   ((created     
      :initarg :created :initform 0 :accessor created-created)
    (created_utc 
      :initarg :created_utc :initform 0 :accessor created-created_utc)))
 
 ;; Datastructures
-(defclass Comment (Volatile Created)
+(defclass comment (volatile created)
   ((id
      :initarg :id :initform "" :accessor comment-id :type string
      :documentation "The id of the comment.")
@@ -107,7 +107,7 @@
      :documentation "Comment replies."
      )))
 
-(defclass Link (Volatile Created)
+(defclass link (volatile created)
  ((id
     :initarg :id :initform "" :accessor link-id :type string
     :documentation "The id of this link")
@@ -163,7 +163,7 @@
   (edited :initarg :edited :initform 0 :accessor link-edited :type integer
     :documentation "Indicates if link has been edited")))
 
-(defclass Subreddit (Created)
+(defclass subreddit (created)
  ((name 
     :initarg :name :initform "" :accessor subreddit-name :type string)
   (id 
@@ -195,7 +195,7 @@
     :initarg :url :initform "" :accessor subreddit-url :type string
     :documentation "The relative URL of the subreddit")))
 
-(defclass Message (Created)
+(defclass message (created)
  ((author
     :initarg :author :initform "" :accessor message-author :type string)
   (body
@@ -221,7 +221,7 @@
   (was_comment
     :initarg :was_comment :initform nil :accessor message-was_comment :type boolean)))
 
-(defclass Account ()
+(defclass account ()
  ((comment_karma
     :initarg :comment_karma :initform 0 :accessor account-comment_karma :type integer)
   (created
@@ -245,7 +245,7 @@
   (name
     :initarg :name :initform "" :accessor account-name :type string)))
 
-(defclass More ()
+(defclass more ()
   ((cnt
      :initarg :cnt :initform 0 :accessor more-count :type integer)
    (parent_id
@@ -258,7 +258,7 @@
      :initarg :children :initform nil :accessor more-children)))
 
 ;; User class
-(defclass User ()
+(defclass user ()
   ((cookie
      :initarg :cookie :initform nil :accessor user-cookie)
    (password
@@ -273,7 +273,7 @@
 ;; json to thing constructors
 (defun link-from-json (json)
   (make-instance
-    'Link
+    'link
     :id (gethash "id" json)
     :name (gethash "name" json)
     :ups (gethash "ups" json)
@@ -306,7 +306,7 @@
 
 (defun subreddit-from-json (json)
   (make-instance
-    'Subreddit
+    'subreddit
     :name (gethash "name" json)
     :id (gethash "id" json)
     :display_name (gethash "display_name" json)
@@ -327,7 +327,7 @@
 (defun comment-from-json (json)
   (let ((replies (gethash "replies" json)))
     (make-instance
-      'Comment
+      'comment
       :id (gethash "id" json)
       :name (gethash "name" json)
       :ups (gethash "ups" json)
@@ -350,7 +350,7 @@
 
 (defun account-from-json (json)
   (make-instance
-    'Account
+    'account
     :comment_karma (gethash "comment_karma" json)
     :created (gethash "created" json)
     :created_utc (gethash "created_utc" json)
@@ -365,7 +365,7 @@
 
 (defun message-from-json (json)
   (make-instance
-    'Message
+    'message
     :author (gethash "author" json)
     :body (gethash "body" json)
     :body_html (gethash "body_html" json)
@@ -381,7 +381,7 @@
 
 (defun listing-from-json (json)
   (make-instance 
-    'Listing 
+    'listing 
     :before (gethash "before" json)
     :after (gethash "after" json)
     :modhash (gethash "modhash" json)
@@ -389,7 +389,7 @@
 
 (defun more-from-json (json)
   (make-instance 
-    'More
+    'more
     :cnt (gethash "count" json)
     :parent_id (gethash "parent_id" json)
     :id (gethash "id" json)
@@ -408,7 +408,7 @@
                    ("t5" (subreddit-from-json data))
                    ("Listing" (listing-from-json data))
                    ("more" (more-from-json data))
-                   (otherwise (make-instance 'Thing :kind kind :data data))))))
+                   (otherwise (make-instance 'thing :kind kind :data data))))))
     (if (listp data) 
       (loop for d in data collect (thing-from-json d)) 
       (thing-from-json data))))
