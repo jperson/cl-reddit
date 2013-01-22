@@ -27,9 +27,10 @@
     (when before (push `("before" . ,before) params))
     (when after (push `("after" . ,after) params))
     (when query (push `("q" . ,query) params))
-    (if params
+    (parse-json
+      (if params
         (get-json (format nil "~a?~a" url (build-get-params params)) :cookie-jar cookie-jar)
-        (get-json url :cookie-jar cookie-jar))))
+        (get-json url :cookie-jar cookie-jar)))))
 
 (defun format-key-args (args)
   (let ((params))

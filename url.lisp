@@ -51,13 +51,12 @@
       (loop for (p . v) in params do 
             (format stream "&~a=~a" (encode-param p) (if (stringp v) (encode-param v) v))))))
 
-(defmacro get-json (url &key cookie-jar)
+(defun get-json (url &key cookie-jar)
   "Gets json data for url with options cookie-jar."
-  `(print ,url)
-  `(yason:parse
-     ,(if (null cookie-jar)
-        `(drakma:http-request ,url :method :get :user-agent *user-agent* :preserve-uri t :want-stream t)
-        `(drakma:http-request ,url :method :get :user-agent *user-agent* :cookie-jar ,cookie-jar :preserve-uri t :want-stream t))))
+  (yason:parse
+    (if (null cookie-jar)
+      (drakma:http-request url :method :get :user-agent *user-agent* :preserve-uri t :want-stream t)
+      (drakma:http-request url :method :get :user-agent *user-agent* :cookie-jar cookie-jar :preserve-uri t :want-stream t))))
 
 (defun post-request (url cookie-jar params)
   "Send post request to url with params list."
