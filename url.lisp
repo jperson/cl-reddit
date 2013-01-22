@@ -48,14 +48,16 @@
   "Builds get param list from cons list '((param . value) (param2 . value) ...)"
   (string-left-trim "&" 
     (with-output-to-string (stream)
-      (loop for (p . v) in params do (format stream "&~a=~a" (encode-param p) (encode-param v))))))
+      (loop for (p . v) in params do 
+            (format stream "&~a=~a" (encode-param p) (if (stringp v) (encode-param v) v))))))
 
 (defmacro get-json (url &key cookie-jar)
   "Gets json data for url with options cookie-jar."
+  `(print ,url)
   `(yason:parse
      ,(if (null cookie-jar)
         `(drakma:http-request ,url :method :get :user-agent *user-agent* :preserve-uri t :want-stream t)
-        `(drakma:http-request ,url :method :get :user-agent *user-agent* :cookie-jar ,cookie-jar :preerve-uri t want-stream t))))
+        `(drakma:http-request ,url :method :get :user-agent *user-agent* :cookie-jar ,cookie-jar :preserve-uri t :want-stream t))))
 
 (defun post-request (url cookie-jar params)
   "Send post request to url with params list."
