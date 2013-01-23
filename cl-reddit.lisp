@@ -43,114 +43,64 @@
   (let ((url (format nil "~a/api/me.json" *reddit*)))
     (with-user (usr) (get-json url :cookie-jar (user-cookie usr)))))
 
-(defun api-subscribe (usr sr &optional (action :sub))
-  "Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
-  (with-user (usr)
-    (let ((params `(("action" . ,(case action (:sub "sub") (otherwise "unsub")))
-                    ("uh" . ,(user-modhash usr)) ("sr_name" . ,sr) ("api_type" . "json")))
-          (url (format nil "~a/api/subscribe.json" *reddit*)))
-      (post-request url (user-cookie usr) params))))
+(defapi subscribe :post &key subreddit action)
+  ;"Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
 
-(defun api-comment (usr id text)
-  "Comments text on id with user usr."
-  (with-user (usr)
-    (let ((url (format nil "~a/api/comment.json" *reddit*))
-          (params `(("thing_id" . ,(format nil "t3_~a" id))
-                    ("uh" . ,(user-modhash usr))
-                    ("text" . ,text)
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
+(defapi comment :post &key thing-id text)
+  ;"Comments text on id with user usr."
 
-(defun api-editusrtext (usr id text)
-  "Edit user text on id with user usr."
-  (with-user (usr)
-    (let ((url (format nil "~a/api/editusertext.json" *reddit*))
-          (params `(("thing_id" . ,(format nil "t3_~a" id))
-                    ("uh" . ,(user-modhash usr))
-                    ("text" . ,text)
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
+(defapi editusertext :post &key thing-id text)
+;  "Edit user text on id with user usr."
 
-(defun api-vote (usr id &optional (dir :up))
-  "Vote direction dir for thing with id with user usr."
-  (with-user (usr)
-    (let ((url (format nil "~a/api/vote.json" *reddit*))
-          (params `(("dir" . ,(case dir (:up "1") (:down "-1") (:unvote "0") (otherwise "1")))
-                    ("id" . ,id)
-                    ("uh" . ,(user-modhash usr))
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
+(defapi vote :post &key id vote)
+  ;"Vote direction dir for thing with id with user usr."
 
-(defun api-save (usr id)
-  "Save thing with id."
-  (api-generic (format nil "~a/api/save.json" *reddit*) usr id))
+(defapi save :post &key id)
+  ;"Save thing with id."
 
-(defun api-unsave (usr id)
-  "Unsave thing with id."
-  (api-generic (format nil "~a/api/unsave.json" *reddit*) usr id))
+(defapi unsave :post &key id)
+  ;"Unsave thing with id."
 
-(defun api-report (usr id)
-  "Report thing with id."
-  (api-generic (format nil "~a/api/report.json" *reddit*) usr id))
+(defapi report :post &key id)
+;  "Report thing with id."
 
-(defun api-marknsfw (usr id)
-  "Mark thing with id as nsfw."
-  (api-generic (format nil "~a/api/marknsfw.json" *reddit*) usr id))
+(defapi marknsfw :post &key id)
+  ;"Mark thing with id as nsfw."
 
-(defun api-hide (usr id)
-  "Hide thing with id."
-  (api-generic (format nil "~a/api/hide.json" *reddit*) usr id))
+(defapi unmarknsfw :post &key id)
 
-(defun api-unhide (usr id)
-  "Unhide thing with id."
-  (api-generic (format nil "~a/api/unhide.json" *reddit*) usr id))
+(defapi hide :post &key id)
+;  "Hide thing with id."
 
-(defun api-del (usr id)
-  "Delete thing with id."
-  (api-generic (format nil "~a/api/del.json" *reddit*) usr id))
+(defapi unhide :post &key id)
+;  "Unhide thing with id."
 
-(defun api-block (usr id)
-  "Block thing with id."
-  (api-generic (format nil "~a/api/block.json" *reddit*) usr id))
+(defapi del :post &key id)
+;  "Delete thing with id."
 
-(defun api-read-message (usr id)
-  "Read message with id."
-  (api-generic (format nil "~a/api/read_message.json" *reddit*) usr id))
+(defapi block :post &key id)
+  ;"Block thing with id."
 
-(defun api-unread-message (usr id)
-  "Unread message with id."
-  (api-generic (format nil "~a/api/unread_messgae.json" *reddit*) usr id))
+(defapi read_message :post &key id)
+  ;"Read message with id."
 
-(defun api-approve (usr id)
-  "Approve thing with id."
-  (api-generic (format nil "~a/api/approve.json" *reddit*) usr id))
+(defapi unread_message :post &key id)
+  ;"Unread message with id."
 
-(defun api-leave-contributor (usr id)
-  "Self removal as moderator of thing with id."
-  (api-generic (format nil "~a/api/leavecontributor.json" *reddit*) usr id))
+(defapi approve :post &key id)
+;"Approve thing with id."
 
-(defun api-leave-moderator (usr id)
-  "Remove as moderator of subreddit with id."
-  (api-generic (format nil "~a/api/leavemoderator.json" *reddit*) usr id))
+(defapi leavecontributor :post &key id)
+;"Self removal as moderator of thing with id."
 
-(defun api-remove (usr id &key is-spam)
-  "Remove thing with id. Is-spam t if spam, nil if not."
-  (with-user (usr)
-    (let ((url (format nil "~a/api/remove.json" *reddit*))
-          (params `(("id" . ,id)
-                    ("uh" . ,(user-modhash usr))
-                    ("spam" . ,(if is-spam "1" "0"))
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
- 
-(defun api-setflairenabled (usr &key flair-enabled)
-  "Enable/disable flair."
-  (with-user (usr)
-    (let ((url (format nil "~a/api/setflairenabled.json" *reddit*))
-          (params `(("uh" . ,(user-modhash usr))
-                    ("flair_enabled" . ,(if flair-enabled "1" "0"))
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
+(defapi leavemoderator :post &key id)
+;  "Remove as moderator of subreddit with id."
+
+(defapi remove :post &key id spam)
+;  "Remove thing with id. Is-spam t if spam, nil if not."
+
+(defapi setflairenabled :post &key flair-enabled)
+  ;"Enable/disable flair."
 
 (defun get-user (r-user &optional usr)
   "Get /user/<r-user>.json.  Optional user usr."

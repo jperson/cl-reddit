@@ -58,7 +58,12 @@
       (drakma:http-request url :method :get :user-agent *user-agent* :preserve-uri t :want-stream t)
       (drakma:http-request url :method :get :user-agent *user-agent* :cookie-jar cookie-jar :preserve-uri t :want-stream t))))
 
-(defun post-request (url cookie-jar params)
+(defun post-request2 (url cookie-jar params)
   "Send post request to url with params list."
   (drakma:http-request url :method :post :user-agent *user-agent* :parameters params :cookie-jar cookie-jar :want-stream t))
+
+(defun post-request (url user params)
+  "Send post request to url with params list."
+  (with-user (user)
+    (drakma:http-request url :method :post :user-agent *user-agent* :parameters params :cookie-jar (user-cookie user) :want-stream t)))
 
