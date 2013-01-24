@@ -6,35 +6,21 @@
 (defun make-user (&key username password)
   (make-instance 'User :username username :password password))
 
-(defun api-generic (url usr id)
-  "Generic api call to url with id and modhash."
-  (with-user (usr)
-    (let ((params `(("id" . ,id)
-                    ("uh" . ,(user-modhash usr))
-                    ("api_type" . "json"))))
-      (yason:parse (post-request url (user-cookie usr) params)))))
-
-(defun build-post-params (p)
-  (loop for (p v) on p by #'cddr
-        collect `(,(string-downcase (symbol-name p)) . ,v)))
-
-(defun api-get-generic (url &key user query after before count limit restrict_sr show sort syntax time target)
-  (let ((params nil))
+(defun api-get-generic (url user &key (query nil) (after nil) (before nil) (count nil) (limit nil) (restrict-sr nil) (show nil) (sort nil) (syntax nil) (time nil) (target nil))
+  (let ((params))
     (when target (push `("target" . ,target) params))
     (when time (push `("time" . ,time) params))
     (when syntax (push `("syntax" . ,syntax) params))
     (when sort (push `("sort" . ,sort) params))
     (when show (push `("show" . ,show) params))
-    (when restrict_sr (push `("restrict_sr" . "1") params))
+    (when restrict-sr (push `("restrict_sr" . "1") params))
     (when limit (push `("limit" . ,limit) params))
     (when count (push `("count" . ,count) params))
     (when before (push `("before" . ,before) params))
     (when after (push `("after" . ,after) params))
     (when query (push `("q" . ,query) params))
-    (parse-json
-      (if params
-        (get-json (format nil "~a?~a" url (build-get-params params)) :cookie-jar (user-cookies user))
-        (get-json url :cookie-jar (user-cookies user))))))
+    (when params (setf url (format nil "~a?~a" url (build-get-params params))))
+    (parse-json (get-json url user))))
 
 (defun format-key-args (args)
   (let ((params))
@@ -59,18 +45,16 @@
                                                   :want-stream t)))
              (setf (flexi-streams:flexi-stream-external-format ,result) :utf-8)
              (let ((,json  (gethash "json" (yason:parse ,result))))
-               (if (null (gethash "error" ,json))
-                 (progn
+               (when (not (gethash "errors" ,json))
                    (loop for ck in (drakma:cookie-jar-cookies ,cks)
                          do (if (string= "reddit_session" (drakma:cookie-name ck))
                               (setf (drakma:cookie-path ck) "/")))
                    (setf (user-modhash ,usr) (gethash "modhash" (gethash "data",json)))
-                   (setf (user-cookie ,usr) ,cks)) 
-                 (print "Error"))))))
-       ,@body)))
+                   (setf (user-cookie ,usr) ,cks)
+                   ,@body))))))))
 
 (defmacro api-post-generic (url user &key subreddit action id thing-id text vote spam flair-enabled)
-  (let ((params (gensym)))
+  (let ((params (gensym)) (result (gensym)))
     `(let ((,params nil))
        ,(when subreddit `(push `("sr_name" . ,subreddit) ,params))
        ,(when action `(push `("action" . ,(case ,action (:sub "sub") (:unsub "unsub"))) ,params))
@@ -82,11 +66,9 @@
        ,(when flair-enabled `(push `("flair_enabled" . ,(if ,flair-enabled "1" "0")) ,params))
        (push `("api_type" . "json") ,params)
        (push `("uh" . ,(user-modhash ,user)) ,params)
-       (yason:parse (post-request ,url ,user ,params)))))
+       (post-request ,url ,user ,params))))
 
-(defmacro defapi (api method &rest args)
+(defmacro def-post-api (api &rest args)
   "Defines an api call."
   `(defun ,(intern (format nil "API-~S" `,api)) (user ,@args)
-     ,(case method
-        (:get `(api-get-generic ,(format nil "~a/~a.json" *reddit* (string-downcase api)) ,@(format-key-args args)))
-        (:post `(api-post-generic ,(format nil "~a/api/~a.json" *reddit* (string-downcase api)) user ,@(format-key-args args))))))
+     (api-post-generic ,(format nil "~a/api/~a.json" *reddit* (string-downcase api)) user ,@(format-key-args args))))

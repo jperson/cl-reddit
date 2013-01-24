@@ -31,7 +31,8 @@
 ;;url escapes
 (eval-when (:execute :load-toplevel :compile-toplevel)
 (defparameter *escape* '(#\$ #\& #\+ #\, #\/ #\: #\; #\= #\? #\@ #\space #\" #\< #\> #\# #\% #\{ #\} #\| #\\ #\^ #\~ #\[ #\] #\`))
-(defparameter *user-agent* "cl-reddit/0.1 (common lisp api wrapper)")
+(defparameter *user-agent* "cl-reddit/0.2 (common lisp api wrapper)")
+(defparameter *reddit* "http://www.reddit.com")
 )
 
 ;;;; URL helper functions ;;;;
@@ -51,12 +52,12 @@
       (loop for (p . v) in params do 
             (format stream "&~a=~a" (encode-param p) (if (stringp v) (encode-param v) v))))))
 
-(defun get-json (url &key cookie-jar)
+(defun get-json (url user)
   "Gets json data for url with options cookie-jar."
   (yason:parse
-    (if (null cookie-jar)
+    (if (null user)
       (drakma:http-request url :method :get :user-agent *user-agent* :preserve-uri t :want-stream t)
-      (drakma:http-request url :method :get :user-agent *user-agent* :cookie-jar cookie-jar :preserve-uri t :want-stream t))))
+      (drakma:http-request url :method :get :user-agent *user-agent* :cookie-jar (user-cookie user) :preserve-uri t :want-stream t))))
 
 (defun post-request2 (url cookie-jar params)
   "Send post request to url with params list."
@@ -66,4 +67,3 @@
   "Send post request to url with params list."
   (with-user (user)
     (drakma:http-request url :method :post :user-agent *user-agent* :parameters params :cookie-jar (user-cookie user) :want-stream t)))
-

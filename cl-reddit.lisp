@@ -29,8 +29,6 @@
 ;;;; cl-reddit.lisp
 (in-package #:cl-reddit)
 
-;;;; Base URL ;;;;
-(defparameter *reddit* "http://www.reddit.com")
 
 ;;;; API ;;;;
 (defun api-login (&key username password)
@@ -38,91 +36,91 @@
   (let ((usr (make-user :username username :password password)))
     (with-user (usr) usr)))
 
-(defun api-me (usr)
-  "Get info for user usr.  Returns user data."
-  (let ((url (format nil "~a/api/me.json" *reddit*)))
-    (with-user (usr) (get-json url :cookie-jar (user-cookie usr)))))
+;(defun api-me (usr)
+  ;"Get info for user usr.  Returns user data."
+  ;(let ((url (format nil "~a/api/me.json" *reddit*)))
+    ;(with-user (usr) (get-json url :cookie-jar (user-cookie usr)))))
 
-(defapi subscribe :post &key subreddit action)
+(def-post-api subscribe &key subreddit action)
   ;"Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
 
-(defapi comment :post &key thing-id text)
+(def-post-api comment  &key thing-id text)
   ;"Comments text on id with user usr."
 
-(defapi editusertext :post &key thing-id text)
+(def-post-api editusertext  &key thing-id text)
 ;  "Edit user text on id with user usr."
 
-(defapi vote :post &key id vote)
+(def-post-api vote  &key id vote)
   ;"Vote direction dir for thing with id with user usr."
 
-(defapi save :post &key id)
+(def-post-api save  &key id)
   ;"Save thing with id."
 
-(defapi unsave :post &key id)
+(def-post-api unsave  &key id)
   ;"Unsave thing with id."
 
-(defapi report :post &key id)
+(def-post-api report  &key id)
 ;  "Report thing with id."
 
-(defapi marknsfw :post &key id)
+(def-post-api marknsfw  &key id)
   ;"Mark thing with id as nsfw."
 
-(defapi unmarknsfw :post &key id)
+(def-post-api unmarknsfw  &key id)
 
-(defapi hide :post &key id)
+(def-post-api hide  &key id)
 ;  "Hide thing with id."
 
-(defapi unhide :post &key id)
+(def-post-api unhide  &key id)
 ;  "Unhide thing with id."
 
-(defapi del :post &key id)
+(def-post-api del  &key id)
 ;  "Delete thing with id."
 
-(defapi block :post &key id)
+(def-post-api block  &key id)
   ;"Block thing with id."
 
-(defapi read_message :post &key id)
+(def-post-api read_message  &key id)
   ;"Read message with id."
 
-(defapi unread_message :post &key id)
+(def-post-api unread_message  &key id)
   ;"Unread message with id."
 
-(defapi approve :post &key id)
+(def-post-api approve  &key id)
 ;"Approve thing with id."
 
-(defapi leavecontributor :post &key id)
+(def-post-api leavecontributor  &key id)
 ;"Self removal as moderator of thing with id."
 
-(defapi leavemoderator :post &key id)
+(def-post-api leavemoderator  &key id)
 ;  "Remove as moderator of subreddit with id."
 
-(defapi remove :post &key id spam)
+(def-post-api remove  &key id spam)
 ;  "Remove thing with id. Is-spam t if spam, nil if not."
 
-(defapi setflairenabled :post &key flair-enabled)
+(def-post-api setflairenabled  &key flair-enabled)
   ;"Enable/disable flair."
 
 (defun get-user (r-user &optional usr)
   "Get /user/<r-user>.json.  Optional user usr."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
-    (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))
+    (get-json url user)))
 
-(defun get-about-user (about-user &optional usr)
+(defun get-about-user (about-user &optional user)
   "Get /user/<about-user>/about.json.  Optional user usr."
-  (get-user (format nil "~a/about" about-user) usr))
+  (get-user (format nil "~a/about" about-user) user))
 
-(defun get-message (usr where)
+(defun get-message (user where)
   "Gets messages from inbox for user usr."
   (let ((url (format nil "~a/message/~a.json" *reddit* where)))
-    (parse-json (get-json url :cookie-jar (user-cookie usr)))))
+    (parse-json (get-json url user))))
 
-(defun get-subscribed (usr)
+(defun get-subscribed (user)
   "Gets subscribed subreddits"
   (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
-    (with-user (usr)
-      (listing-children (parse-json (get-json url :cookie-jar (user-cookie usr)))))))
+    (with-user (user)
+      (listing-children (parse-json (get-json url user))))))
 
-(defun get-comments (id usr &key article comment context depth limit sort)
+(defun get-comments (id user &key article comment context depth limit sort)
   "Gets comments for link id in subreddit sr."
   (let ((params nil))
     (when sort (push `("sort" . ,sort) params))
@@ -132,53 +130,44 @@
     (when comment (push `("comment" . ,comment) params))
     (when article (push `("article" . ,article) params))
     (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
-      (with-user (usr)
-        (butlast (listing-children (parse-json (second (get-json url :cookie-jar (user-cookie usr))))))))))
-
+      (with-user (user)
+        (butlast (listing-children (parse-json (second (get-json url user)))))))))
 
 ;;Listings
-(defun get-reddit (&optional usr)
+(defun get-reddit (&optional user)
   "Gets json data for reddit home page. Optional user usr."
   (let ((url (format nil "~a/.json" *reddit*)))
-    (listing-children
-      (parse-json 
-        (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))))
+    (listing-children (parse-json (get-json url user)))))
 
-(defun get-subreddit (sub &optional usr)
+(defun get-subreddit (sub &optional user)
   "Gets json data for subreddit sub.  Optional user usr."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
-    (listing-children 
-      (parse-json
-        (if (null usr) (get-json url) (get-json url :cookie-jar (user-cookie usr)))))))
+    (listing-children (parse-json (get-json url user)))))
 
-(defun get-subreddit-new (sub &optional usr)
+(defun get-subreddit-new (sub &optional user)
   "Gets json data for /r/<sub>/new. Optional user usr."
-  (get-subreddit (format nil "~a/new.json" sub) usr))
+  (get-subreddit (format nil "~a/new.json" sub) user))
 
-(defun get-subreddit-top (sub &optional usr)
+(defun get-subreddit-top (sub &optional user)
   "Gets json data for top posts in subreddit sub. Optional user usr."
-  (get-subreddit (format nil "~a/top.json" sub) usr))
+  (get-subreddit (format nil "~a/top.json" sub) user))
 
-(defun get-subreddit-about (sub &optional usr)
+(defun get-subreddit-about (sub &optional user)
   "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user usr."
-  (get-subreddit (format nil "~a/about.json" sub) usr))
+  (get-subreddit (format nil "~a/about.json" sub) user))
 
-(defun get-search (query &key after before count limit restrict_sr show sort syntax time target sub)
+(defun get-search (query &key user after before count limit restrict-sr show sort syntax time target sub)
   "Search for query."
-  (let ((params nil))
-    (when target (push `("target" . ,target) params))
-    (when time (push `("time" . ,time) params))
-    (when syntax (push `("syntax" . ,syntax) params))
-    (when sort (push `("sort" . ,sort) params))
-    (when show (push `("show" . ,show) params))
-    (when restrict_sr (push `("restrict_sr" . "1") params))
-    (when limit (push `("limit" . ,limit) params))
-    (when count (push `("count" . ,count) params))
-    (when before (push `("before" . ,before) params))
-    (when after (push `("after" . ,after) params))
-    (push `("q" . ,query) params)
+  (let ((url (if sub (format nil "~a/r/~a/search.json" *reddit* sub) (format nil "~a/search.json" *reddit*))))
     (listing-children
-      (parse-json
-        (if (null sub)
-          (get-json (format nil "~a/search.json?~a" *reddit* (build-get-params params)))
-          (get-json (format nil "~a/r/~a/search.json?~a" *reddit* sub (build-get-params params))))))))
+      (api-get-generic url user :query query 
+                                :after after 
+                                :before before 
+                                :count count 
+                                :limit limit 
+                                :restrict-sr restrict-sr
+                                :show show
+                                :sort sort
+                                :syntax syntax
+                                :time time
+                                :target target))))
