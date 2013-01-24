@@ -31,17 +31,17 @@ API
 (defun api-login (&key username password)  
   "Login user username with password. Returns a User object with modhash,cookie set.")   
 
-(defun api-subscribe (usr sr &optional (action :sub))  
+(defun api-subscribe (user &key id action))  
   "Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub")  
 
-(defun api-comment (usr id text)  
+(defun api-comment (user &key id text)  
   "Comments text on id with user usr.")  
 
-(defun api-editusrtext (usr id text)  
+(defun api-editusrtext (user &key id text)  
   "Edit user text on id with user usr.")  
 
-(defun api-vote (usr id &optional (dir :up))  
-  "Vote direction dir for thing with id with user usr.")  
+(defun api-vote (user &key id vote)  
+  "Vote direction :up :down :unvote for thing with id with user.")  
 
 (defun api-save (user &key id)  
   "Save thing with id.")  
