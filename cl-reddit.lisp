@@ -1,4 +1,4 @@
-;; Copyright (c) 2012, Jason R. Person
+;; Copyright (c) 2013, Jason R. Person
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,7 @@
 ;; The views and conclusions contained in the software and documentation are those
 ;; of the authors and should not be interpreted as representing official policies, 
 ;; either expressed or implied, of the FreeBSD Project.
-
-
-;;;; cl-reddit.lisp
 (in-package #:cl-reddit)
-
 
 ;;;; API ;;;;
 (defun api-login (&key username password)
@@ -36,71 +32,72 @@
   (let ((usr (make-user :username username :password password)))
     (with-user (usr) usr)))
 
-;(defun api-me (usr)
-  ;"Get info for user usr.  Returns user data."
-  ;(let ((url (format nil "~a/api/me.json" *reddit*)))
-    ;(with-user (usr) (get-json url :cookie-jar (user-cookie usr)))))
-
+; "Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
 (def-post-api subscribe &key subreddit action)
-  ;"Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
 
-(def-post-api comment  &key thing-id text)
-  ;"Comments text on id with user usr."
+; "Comments text on id with user usr."
+(def-post-api comment &key thing-id text)
 
-(def-post-api editusertext  &key thing-id text)
-;  "Edit user text on id with user usr."
+; "Edit user text on id with user usr."
+(def-post-api editusertext &key thing-id text)
 
-(def-post-api vote  &key id vote)
-  ;"Vote direction dir for thing with id with user usr."
+; "Vote direction dir for thing with id with user usr."
+(def-post-api vote &key id vote)
 
-(def-post-api save  &key id)
-  ;"Save thing with id."
+; "Save thing with id."
+(def-post-api save &key id)
 
-(def-post-api unsave  &key id)
-  ;"Unsave thing with id."
+; "Unsave thing with id."
+(def-post-api unsave &key id)
 
-(def-post-api report  &key id)
-;  "Report thing with id."
+; "Report thing with id."
+(def-post-api report &key id)
 
-(def-post-api marknsfw  &key id)
-  ;"Mark thing with id as nsfw."
+; "Mark thing with id as nsfw."
+(def-post-api marknsfw &key id)
 
-(def-post-api unmarknsfw  &key id)
+; Unmark thing with id
+(def-post-api unmarknsfw &key id)
 
-(def-post-api hide  &key id)
-;  "Hide thing with id."
+; "Hide thing with id."
+(def-post-api hide &key id)
 
-(def-post-api unhide  &key id)
-;  "Unhide thing with id."
+; "Unhide thing with id."
+(def-post-api unhide &key id)
 
-(def-post-api del  &key id)
-;  "Delete thing with id."
+; "Delete thing with id."
+(def-post-api del &key id)
 
-(def-post-api block  &key id)
-  ;"Block thing with id."
+; "Block thing with id."
+(def-post-api block &key id)
 
-(def-post-api read_message  &key id)
-  ;"Read message with id."
+; "Read message with id."
+(def-post-api read_message &key id)
 
-(def-post-api unread_message  &key id)
-  ;"Unread message with id."
+; "Unread message with id."
+(def-post-api unread_message &key id)
 
-(def-post-api approve  &key id)
-;"Approve thing with id."
+; "Approve thing with id."
+(def-post-api approve &key id)
 
-(def-post-api leavecontributor  &key id)
-;"Self removal as moderator of thing with id."
+; "Self removal as moderator of thing with id."
+(def-post-api leavecontributor &key id)
 
-(def-post-api leavemoderator  &key id)
-;  "Remove as moderator of subreddit with id."
+; "Remove as moderator of subreddit with id."
+(def-post-api leavemoderator &key id)
 
-(def-post-api remove  &key id spam)
-;  "Remove thing with id. Is-spam t if spam, nil if not."
+; "Remove thing with id. Is-spam t if spam, nil if not."
+(def-post-api remove &key id spam)
 
-(def-post-api setflairenabled  &key flair-enabled)
-  ;"Enable/disable flair."
+; "Enable/disable flair."
+(def-post-api setflairenabled &key flair-enabled)
 
-(defun get-user (r-user &optional usr)
+(defun api-me (user)
+  "Get info for user usr.  Returns user data."
+  (let ((url (format nil "~a/api/me.json" *reddit*)))
+    (with-user (user) (get-json url user))))
+
+(defun get-user (r-user &optional user)
   "Get /user/<r-user>.json.  Optional user usr."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
     (get-json url user)))

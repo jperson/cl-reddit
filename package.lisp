@@ -1,4 +1,4 @@
-;; Copyright (c) 2012, Jason R. Person
+;; Copyright (c) 2013, Jason R. Person
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -24,9 +24,6 @@
 ;; The views and conclusions contained in the software and documentation are those
 ;; of the authors and should not be interpreted as representing official policies, 
 ;; either expressed or implied, of the FreeBSD Project.
-
-;;;; package.lisp
-
 (defpackage #:cl-reddit
   (:use #:cl #:asdf)
             ;;API
@@ -49,11 +46,11 @@
            #:api-unhide
            #:api-del
            #:api-block
-           #:api-read-message
-           #:api-unread-message
+           #:api-read_message
+           #:api-unread_message
            #:api-approve
-           #:api-leave-contributor
-           #:api-leave-moderator
+           #:api-leavecontributor
+           #:api-leavemoderator
            #:api-remove
            #:api-setflairenabled
            #:get-reddit

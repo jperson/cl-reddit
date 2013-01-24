@@ -1,4 +1,4 @@
-;; Copyright (c) 2012, Jason R. Person
+;; Copyright (c) 2013, Jason R. Person
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -24,8 +24,6 @@
 ;; The views and conclusions contained in the software and documentation are those
 ;; of the authors and should not be interpreted as representing official policies, 
 ;; either expressed or implied, of the FreeBSD Project.
-
-;;;; url.lisp
 (in-package #:cl-reddit)
 
 ;;url escapes
