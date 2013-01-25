@@ -27,6 +27,7 @@ CL-REDDIT> (defvar lst (get-search "Lance Armstrong" :sub "funny" :restrict_sr t
 API
 ===  
 
+All key params are required for api-* functions generated from def-post-api macro.
 ```cl
 (defun api-login (&key username password)  
   "Login user username with password. Returns a User object with modhash,cookie set.")   
@@ -88,37 +89,37 @@ API
 (defun api-setflairenabled (user &key flair-enabled)  
   "Enable/disable flair.")  
 
-(defun get-user (r-user &optional usr)  
-  "Get /user/<r-user>.json.  Optional user usr.")  
+(defun get-user (r-user &optional user)  
+  "Get /user/<r-user>.json.  Optional user.")  
 
 (defun get-about-user (about-user &optional usr)  
-  "Get /user/<about-user>/about.json.  Optional user usr.")  
+  "Get /user/<about-user>/about.json.  Optional user.")  
 
-(defun get-message (usr where)  
-  "Gets messages from inbox for user usr.")  
+(defun get-message (user where)  
+  "Gets messages from inbox for user user.")  
     
-(defun get-subscribed (usr)  
+(defun get-subscribed (user)  
   "Gets subscribed subreddits")  
 
-(defun get-comments (id usr &key article comment context depth limit sort)  
+(defun get-comments (id user &key article comment context depth limit sort)  
   "Gets comments for link id in subreddit sr.")  
 
-(defun get-reddit (&optional usr)  
-  "Gets json data for reddit home page. Optional user usr.")  
+(defun get-reddit (&optional user)  
+  "Gets json data for reddit home page. Optional user.")  
     
-(defun get-subreddit (sub &optional usr)  
+(defun get-subreddit (sub &optional user)  
   "Gets json data for subreddit sub.  Optional user usr.")  
 
-(defun get-subreddit-new (sub &optional usr)  
-  "Gets json data for /r/<sub>/new. Optional user usr.")  
+(defun get-subreddit-new (sub &optional user)  
+  "Gets json data for /r/<sub>/new. Optional user.")  
 
-(defun get-subreddit-top (sub &optional usr)  
-  "Gets json data for top posts in subreddit sub. Optional user usr.")  
+(defun get-subreddit-top (sub &optional user)  
+  "Gets json data for top posts in subreddit sub. Optional user user.")  
 
-(defun get-subreddit-about (sub &optional usr)  
-  "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user usr.")  
+(defun get-subreddit-about (sub &optional user)  
+  "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user.")  
 
-(defun get-search (query &key after before count limit restrict_sr show sort syntax time target sub)  
+(defun get-search (query &key user after before count limit restrict_sr show sort syntax time target sub)  
   "Search for query.")  
 ```
 
