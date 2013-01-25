@@ -56,6 +56,14 @@
           (push (values (intern (string-upcase `,arg) "KEYWORD")) params))
     params))
 
+(defun symbol-string(s)
+  "Convert the input symbol to the correct string for api call."
+  (case s
+    ('up "1")
+    ('down "-1")
+    ('unvote "0")
+    (otherwise (string-downcase (symbol-name s)))))
+
 ;;;; Helper macros ;;;;
 (defmacro with-user ((usr) &body body)
   "Does 'body' with logged-in user usr.  Logins in user if not logged-in."
@@ -85,11 +93,11 @@
   (let ((params (gensym)) (result (gensym)))
     `(let ((,params nil))
        ,(when subreddit `(push `("sr_name" . ,subreddit) ,params))
-       ,(when action `(push `("action" . ,(case ,action (:sub "sub") (:unsub "unsub"))) ,params))
+       ,(when action `(push `("action" . ,(symbol-string ,action)) ,params))
        ,(when id `(push `("id" . ,id) ,params))
        ,(when thing-id `(push `("thing_id" . ,thing-id) ,params))
        ,(when text `(push `("text" . ,text) ,params))
-       ,(when vote `(push `("dir" . ,(case ,vote (:up "1") (:down "-1") (:unvote "0"))) ,params))
+       ,(when vote `(push `("dir" . ,(symbol-string ,vote)) ,params))
        ,(when spam `(push `("spam" . ,(if ,spam "1" "0")) ,params))
        ,(when flair-enabled `(push `("flair_enabled" . ,(if ,flair-enabled "1" "0")) ,params))
        (push `("api_type" . "json") ,params)

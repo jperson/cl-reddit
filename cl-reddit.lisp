@@ -97,49 +97,48 @@
   (let ((url (format nil "~a/api/me.json" *reddit*)))
     (with-user (user) (get-json url user))))
 
-(defun get-user (r-user &optional user)
-  "Get /user/<r-user>.json.  Optional user usr."
+(defun get-user (r-user &optional (user nil))
+  "Get /user/<r-user>.json.  Optional user user."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
-    (get-json url user)))
+    (if user
+      (with-user (user) (get-json url user))
+      (get-json url nil))))
 
-(defun get-about-user (about-user &optional user)
-  "Get /user/<about-user>/about.json.  Optional user usr."
-  (get-user (format nil "~a/about" about-user) user))
+(defun get-about-user (about-user &optional (user nil))
+  "Get /user/<about-user>/about.json.  Optional user user."
+  (let ((url (format nil "~a/user/~a/about.json" *reddit* about-user)))
+    (if user
+      (with-user (user) (get-json url user))
+      (get-json url nil))))
 
 (defun get-message (user where)
-  "Gets messages from inbox for user usr."
-  (let ((url (format nil "~a/message/~a.json" *reddit* where)))
-    (parse-json (get-json url user))))
-
-(defun get-subscribed (user)
-  "Gets subscribed subreddits"
-  (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
+  "Gets messages from inbox for user user."
+  (let ((url (format nil "~a/message/~a.json" *reddit* (string-symbol where))))
     (with-user (user)
-      (listing-children (parse-json (get-json url user))))))
+      (parse-json (get-json url user)))))
 
-(defun get-comments (id user &key article comment context depth limit sort)
-  "Gets comments for link id in subreddit sr."
-  (let ((params nil))
-    (when sort (push `("sort" . ,sort) params))
-    (when limit (push `("limit" . ,limit) params))
-    (when depth (push `("depth" . ,depth) params))
-    (when context (push `("context" . ,context) params))
-    (when comment (push `("comment" . ,comment) params))
-    (when article (push `("article" . ,article) params))
-    (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
-      (with-user (user)
-        (butlast (listing-children (parse-json (second (get-json url user)))))))))
+(defun get-username-available (username)
+  "Check if a username is available."
+  (let ((url (format nil "~a/api/username_available.json~a" 
+                     *reddit* (build-get-params `(("u" . ,username))))))
+    (parse-json (get-json url))))
 
 ;;Listings
-(defun get-reddit (&optional user)
+(defun get-reddit (&optional (user nil))
   "Gets json data for reddit home page. Optional user usr."
   (let ((url (format nil "~a/.json" *reddit*)))
-    (listing-children (parse-json (get-json url user)))))
+    (listing-children 
+      (if user
+        (with-user (user) (parse-json (get-json url user)))
+        (parse-json (get-json url nil))))))
 
-(defun get-subreddit (sub &optional user)
+(defun get-subreddit (sub &optional (user nil))
   "Gets json data for subreddit sub.  Optional user usr."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
-    (listing-children (parse-json (get-json url user)))))
+    (listing-children 
+      (if user
+        (with-user (user) (parse-json (get-json url user)))
+        (parse-json (get-json url nil))))))
 
 (defun get-subreddit-new (sub &optional user)
   "Gets json data for /r/<sub>/new. Optional user usr."
@@ -153,18 +152,70 @@
   "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user usr."
   (get-subreddit (format nil "~a/about.json" sub) user))
 
+(defun get-subscribed (user)
+  "Gets subscribed subreddits"
+  (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
+    (with-user (user)
+      (listing-children 
+        (parse-json (get-json url user))))))
+
+(defun get-reddits-mine (user &key (where 'subscriber) after before count limit show target)
+  "Gets listing of subreddits ('subscriber 'moderator 'contributor)for user."
+  (let ((usr (format nil "~a/reddits/mine/~a.json" *reddit* (symbol-string where)))
+        (params))
+    (when after (push `("after" . ,after) params))
+    (when before (push `("before" . ,before) params))
+    (when count (push `("count" . ,count) params))
+    (when limit (push `("limit" . ,limit) params))
+    (when show (push `("show" . ,show) params))
+    (when target (push `("target" . ,target) params))
+    (with-user (user)
+      (listing-children 
+        (parse-json (get-json url user))))))
+
+(defun get-reddits-where (user &key (where 'new) after before count limit show target)
+  "Gets listing of subreddits (:subscriber :moderator :contributor)for user."
+  (let ((usr (format nil "~a/reddits/~a.json" *reddit* (symbol-string where)))
+        (params))
+    (when after (push `("after" . ,after) params))
+    (when before (push `("before" . ,before) params))
+    (when count (push `("count" . ,count) params))
+    (when limit (push `("limit" . ,limit) params))
+    (when show (push `("show" . ,show) params))
+    (when target (push `("target" . ,target) params))
+    (with-user (user)
+      (listing-children 
+        (parse-json (get-json url user))))))
+
 (defun get-search (query &key user after before count limit restrict-sr show sort syntax time target sub)
   "Search for query."
-  (let ((url (if sub (format nil "~a/r/~a/search.json" *reddit* sub) (format nil "~a/search.json" *reddit*))))
+  (let ((params)
+        (url (if sub (format nil "~a/r/~a/search.json" *reddit* sub) (format nil "~a/search.json" *reddit*))))
+    (when after (push `("after" . ,after) params))
+    (when before (push `("before" . ,before) params))
+    (when count (push `("count" . ,count) params))
+    (when limit (push `("limit" . ,limit) params))
+    (when restrict-sr (push `("restrict_sr" . "1") params))
+    (when show (push `("show" . ,show) params))
+    (when sort (push `("sort" . ,(symbol-string sort)) params))
+    (when time (push `("time" . ,time) params))
+    (when target (push `("target" . ,target) params))
+    (push `("q" . ,query) params)
+    (when params (setf url (format nil "~a?~a" url (build-get-params params))))
     (listing-children
-      (api-get-generic url user :query query 
-                                :after after 
-                                :before before 
-                                :count count 
-                                :limit limit 
-                                :restrict-sr restrict-sr
-                                :show show
-                                :sort sort
-                                :syntax syntax
-                                :time time
-                                :target target))))
+      (if user
+        (with-user (user) (parse-json (get-json url user)))
+        (parse-json (get-json url nil))))))
+
+(defun get-comments (id user &key article comment context depth limit sort)
+  "Gets comments for link id in subreddit sr."
+  (let ((params nil))
+    (when sort (push `("sort" . ,sort) params))
+    (when limit (push `("limit" . ,limit) params))
+    (when depth (push `("depth" . ,depth) params))
+    (when context (push `("context" . ,context) params))
+    (when comment (push `("comment" . ,comment) params))
+    (when article (push `("article" . ,article) params))
+    (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
+      (with-user (user)
+        (butlast (listing-children (parse-json (second (get-json url user)))))))))
