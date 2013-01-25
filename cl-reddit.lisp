@@ -32,16 +32,16 @@
   (let ((usr (make-user :username username :password password)))
     (with-user (usr) usr)))
 
-; "Sub or unsub from subreddit sr for user usr. Action can be :sub or :unsub"
+; "Sub or unsub from subreddit sr for user usr. Action can be 'sub or 'unsub"
 (def-post-api subscribe &key subreddit action)
 
-; "Comments text on id with user usr."
+; "Comments text on id with user."
 (def-post-api comment &key thing-id text)
 
-; "Edit user text on id with user usr."
+; "Edit user text on id with user."
 (def-post-api editusertext &key thing-id text)
 
-; "Vote direction dir for thing with id with user usr."
+; "Vote direction dir for thing with id with user."
 (def-post-api vote &key id vote)
 
 ; "Save thing with id."
@@ -112,7 +112,9 @@
       (get-json url nil))))
 
 (defun get-message (user where)
-  "Gets messages from inbox for user user."
+  "Gets messages from inbox for user user.
+   where can be one of 'inbox 'unread 'sent
+   "
   (let ((url (format nil "~a/message/~a.json" *reddit* (string-symbol where))))
     (with-user (user)
       (parse-json (get-json url user)))))
@@ -125,7 +127,7 @@
 
 ;;Listings
 (defun get-reddit (&optional (user nil))
-  "Gets json data for reddit home page. Optional user usr."
+  "Gets json data for reddit home page. Optional user."
   (let ((url (format nil "~a/.json" *reddit*)))
     (listing-children 
       (if user
@@ -133,7 +135,7 @@
         (parse-json (get-json url nil))))))
 
 (defun get-subreddit (sub &optional (user nil))
-  "Gets json data for subreddit sub.  Optional user usr."
+  "Gets json data for subreddit sub.  Optional user."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
     (listing-children 
       (if user
@@ -141,7 +143,7 @@
         (parse-json (get-json url nil))))))
 
 (defun get-subreddit-new (sub &optional user)
-  "Gets json data for /r/<sub>/new. Optional user usr."
+  "Gets json data for /r/<sub>/new. Optional user."
   (get-subreddit (format nil "~a/new.json" sub) user))
 
 (defun get-subreddit-top (sub &optional user)
@@ -160,7 +162,8 @@
         (parse-json (get-json url user))))))
 
 (defun get-reddits-mine (user &key (where 'subscriber) after before count limit show target)
-  "Gets listing of subreddits ('subscriber 'moderator 'contributor)for user."
+  "Gets listing of subreddits for user.
+   where can be one of 'subscriber 'moderator 'contributorfor."
   (let ((usr (format nil "~a/reddits/mine/~a.json" *reddit* (symbol-string where)))
         (params))
     (when after (push `("after" . ,after) params))
@@ -174,7 +177,8 @@
         (parse-json (get-json url user))))))
 
 (defun get-reddits-where (user &key (where 'new) after before count limit show target)
-  "Gets listing of subreddits (:subscriber :moderator :contributor)for user."
+  "Gets listing of subreddits for user.
+   where can be one of 'new 'popular 'banned"
   (let ((usr (format nil "~a/reddits/~a.json" *reddit* (symbol-string where)))
         (params))
     (when after (push `("after" . ,after) params))

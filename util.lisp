@@ -31,23 +31,6 @@
   "Make an instance of user class with username and password"
   (make-instance 'user :username username :password password))
 
-(defun api-get-generic (url user &key (query nil) (after nil) (before nil) (count nil) (limit nil) (restrict-sr nil) (show nil) (sort nil) (syntax nil) (time nil) (target nil))
-  "Make a generic get request"
-  (let ((params))
-    (when target (push `("target" . ,target) params))
-    (when time (push `("time" . ,time) params))
-    (when syntax (push `("syntax" . ,syntax) params))
-    (when sort (push `("sort" . ,sort) params))
-    (when show (push `("show" . ,show) params))
-    (when restrict-sr (push `("restrict_sr" . "1") params))
-    (when limit (push `("limit" . ,limit) params))
-    (when count (push `("count" . ,count) params))
-    (when before (push `("before" . ,before) params))
-    (when after (push `("after" . ,after) params))
-    (when query (push `("q" . ,query) params))
-    (when params (setf url (format nil "~a?~a" url (build-get-params params))))
-    (parse-json (get-json url user))))
-
 (defun format-key-args (args)
   "Format a list of key arguments"
   (let ((params))
