@@ -100,16 +100,14 @@
 (defun get-user (r-user &optional (user nil))
   "Get /user/<r-user>.json.  Optional user user."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
-    (if user
-      (with-user (user) (get-json url user))
-      (get-json url nil))))
+    (if-user-with user
+      (get-json url))))
 
 (defun get-about-user (about-user &optional (user nil))
   "Get /user/<about-user>/about.json.  Optional user user."
   (let ((url (format nil "~a/user/~a/about.json" *reddit* about-user)))
-    (if user
-      (with-user (user) (get-json url user))
-      (get-json url nil))))
+    (if-user-with user
+      (get-json url))))
 
 (defun get-message (user where)
   "Gets messages from inbox for user user.
@@ -130,17 +128,15 @@
   "Gets json data for reddit home page. Optional user."
   (let ((url (format nil "~a/.json" *reddit*)))
     (listing-children 
-      (if user
-        (with-user (user) (parse-json (get-json url user)))
-        (parse-json (get-json url nil))))))
+      (if-user-with user 
+        (parse-json (get-json url))))))
 
 (defun get-subreddit (sub &optional (user nil))
   "Gets json data for subreddit sub.  Optional user."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
     (listing-children 
-      (if user
-        (with-user (user) (parse-json (get-json url user)))
-        (parse-json (get-json url nil))))))
+      (if-user-with user
+        (parse-json (get-json url))))))
 
 (defun get-subreddit-new (sub &optional user)
   "Gets json data for /r/<sub>/new. Optional user."
@@ -207,9 +203,7 @@
     (push `("q" . ,query) params)
     (when params (setf url (format nil "~a?~a" url (build-get-params params))))
     (listing-children
-      (if user
-        (with-user (user) (parse-json (get-json url user)))
-        (parse-json (get-json url nil))))))
+      (if-user-with user (parse-json (get-json url user))))))
 
 (defun get-comments (id user &key article comment context depth limit sort)
   "Gets comments for link id in subreddit sr."

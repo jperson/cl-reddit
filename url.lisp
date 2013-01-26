@@ -50,7 +50,7 @@
       (loop for (p . v) in params do 
             (format stream "&~a=~a" (encode-param p) (if (stringp v) (encode-param v) v))))))
 
-(defun get-json (url user)
+(defun get-json (url &optional (user nil))
   "Gets json data for url with options cookie-jar."
   (yason:parse
     (if (null user)
