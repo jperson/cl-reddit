@@ -113,7 +113,7 @@
   "Gets messages from inbox for user user.
    where can be one of 'inbox 'unread 'sent
    "
-  (let ((url (format nil "~a/message/~a.json" *reddit* (string-symbol where))))
+  (let ((url (format nil "~a/message/~a.json" *reddit* (symbol-string where))))
     (with-user (user)
       (parse-json (get-json url user)))))
 
