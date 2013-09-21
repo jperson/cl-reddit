@@ -136,6 +136,12 @@ of these.
 get sent in a short time.  It would be nice if the api could handle this and either resend after a timeout or wait to send
 the request if too many have been sent in a short time.
 
+* Async api - The basic api is synchronous, it could be used to build async requests but having an async interface along with the basic one could be useful.
+
+* High level api - The current api is pretty low level, mapping to the reddit api, having something that works at a higher level would make this library easier to use. I haven't though much about what this would look like so ideas are welcome.
+
+* Error handling - Currently there isn't anything, so if a api request fails for some reason the result is probably a nil value.
+
 * Better return types - Some of the methods return a hash table or a listing, see (cl-reddit:get-user), which doesn't always make sense.
 
 * Tests - It would be nice to have a test suite with lots of api coverage, maybe using a unit test framework.
