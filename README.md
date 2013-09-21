@@ -136,8 +136,7 @@ of these.
 get sent in a short time.  It would be nice if the api could handle this and either resend after a timeout or wait to send
 the request if too many have been sent in a short time.
 
-* Better return types - Some of the methods return a hash table, it's clunky and dumb.  It would be nice if they returned 
-something that made more sense.
+* Better return types - Some of the methods return a hash table or a listing, see (cl-reddit:get-user), which doesn't always make sense.
 
 * Tests - It would be nice to have a test suite with lots of api coverage, maybe using a unit test framework.
 
