@@ -123,7 +123,29 @@ All key params are required for api-* functions generated from def-post-api macr
   "Search for query.")  
 ```
 
-See cl-reddit.lisp for full api. This is still a work in progress so changes are likely.
+See cl-reddit.lisp for full api.
+
+
+Todo
+===
+
+Lots of stuff could be improved or extended, contributers are welcome!  Here are a few ideas, feel free to work on any (or all)
+of these.
+
+* Request throttling - Basically right now the api will let you send as many requests as you want, which can return errors if too many
+get sent in a short time.  It would be nice if the api could handle this and either resend after a timeout or wait to send
+the request if too many have been sent in a short time.
+
+* Better return types - Some of the methods return a hash table or a listing, see (cl-reddit:get-user), which doesn't always make sense.
+
+* Tests - It would be nice to have a test suite with lots of api coverage, maybe using a unit test framework.
+
+* More documentation - What project couldn't use this?
+
+* Cool apps that use this library so it gets more exposure.
+
+
+If you have any opinions/ideas on how to make this thing better please share!
 
     
 
