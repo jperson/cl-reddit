@@ -101,13 +101,13 @@
   "Get /user/<r-user>.json.  Optional user user."
   (let ((url (format nil "~a/user/~a.json" *reddit* r-user)))
     (if-user-with user
-      (get-json url))))
+      (parse-json (get-json url)) )))
 
 (defun get-about-user (about-user &optional (user nil))
   "Get /user/<about-user>/about.json.  Optional user user."
   (let ((url (format nil "~a/user/~a/about.json" *reddit* about-user)))
     (if-user-with user
-      (get-json url))))
+       (parse-json (get-json url)))))
 
 (defun get-message (user where)
   "Gets messages from inbox for user user.
