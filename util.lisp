@@ -100,3 +100,24 @@
   "Defines an api call."
   `(defun ,(intern (format nil "API-~S" `,api)) (user ,@args)
      (api-post-generic ,(format nil "~a/api/~a.json" *reddit* (string-downcase api)) user ,@(format-key-args args))))
+
+(defmacro param-push (&rest commands)
+  "Used in cl-reddit.lisp when defining get-* fns.
+   Example expansion:
+   (param-push hello a \"this'll be in place of a\")
+   =>
+  (PROGN
+    (WHEN A (PUSH `(\"this'll be in place of a\" ,@A) PARAMS))
+    (WHEN HELLO (PUSH `(\"hello\" ,@HELLO) PARAMS)))"
+  (flet ((process-commands (commands)
+           (let (stack)
+             (loop for c in commands do
+                  (typecase c
+                    (symbol (push `(,c ,(string-downcase c)) stack))
+                    (string (setf (car stack) `(,(caar stack) ,c)))))
+             stack)))
+    `(progn
+       ,@(loop for c in (process-commands commands)
+            collect
+              `(when ,(car c)
+                 (push `(,',(cadr c) . ,,(car c)) params))))))

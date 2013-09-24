@@ -157,20 +157,6 @@
       (listing-children 
         (parse-json (get-json url user))))))
 
-(defmacro param-push (&rest commands)
-  (flet ((process-commands (commands)
-           (let (stack)
-             (loop for c in commands do
-                  (typecase c
-                    (symbol (push `(,c ,(string-downcase c)) stack))
-                    (string (setf (car stack) `(,(caar stack) ,c)))))
-             stack)))
-    `(progn
-       ,@(loop for c in (process-commands commands)
-            collect
-              `(when ,(car c)
-                 (push `(,',(cadr c) . ,,(car c)) params))))))
-
 (defun get-reddits-mine (user &key (where 'subscriber) after before count limit show target)
   "Gets listing of subreddits for user.
    where can be one of 'subscriber 'moderator 'contributorfor."
