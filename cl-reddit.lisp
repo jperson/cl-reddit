@@ -160,14 +160,9 @@
 (defun get-reddits-mine (user &key (where 'subscriber) after before count limit show target)
   "Gets listing of subreddits for user.
    where can be one of 'subscriber 'moderator 'contributorfor."
-  (let ((usr (format nil "~a/reddits/mine/~a.json" *reddit* (symbol-string where)))
+  (let ((url (format nil "~a/reddits/mine/~a.json" *reddit* (symbol-string where)))
         (params))
-    (when after (push `("after" . ,after) params))
-    (when before (push `("before" . ,before) params))
-    (when count (push `("count" . ,count) params))
-    (when limit (push `("limit" . ,limit) params))
-    (when show (push `("show" . ,show) params))
-    (when target (push `("target" . ,target) params))
+    (param-push after before count limit show target)
     (with-user (user)
       (listing-children 
         (parse-json (get-json url user))))))
@@ -175,14 +170,9 @@
 (defun get-reddits-where (user &key (where 'new) after before count limit show target)
   "Gets listing of subreddits for user.
    where can be one of 'new 'popular 'banned"
-  (let ((usr (format nil "~a/reddits/~a.json" *reddit* (symbol-string where)))
+  (let ((url (format nil "~a/reddits/~a.json" *reddit* (symbol-string where)))
         (params))
-    (when after (push `("after" . ,after) params))
-    (when before (push `("before" . ,before) params))
-    (when count (push `("count" . ,count) params))
-    (when limit (push `("limit" . ,limit) params))
-    (when show (push `("show" . ,show) params))
-    (when target (push `("target" . ,target) params))
+    (param-push after before count limit show target)
     (with-user (user)
       (listing-children 
         (parse-json (get-json url user))))))
@@ -191,15 +181,9 @@
   "Search for query."
   (let ((params)
         (url (if sub (format nil "~a/r/~a/search.json" *reddit* sub) (format nil "~a/search.json" *reddit*))))
-    (when after (push `("after" . ,after) params))
-    (when before (push `("before" . ,before) params))
-    (when count (push `("count" . ,count) params))
-    (when limit (push `("limit" . ,limit) params))
+    (param-push after before count limit show time target)
     (when restrict-sr (push `("restrict_sr" . "1") params))
-    (when show (push `("show" . ,show) params))
     (when sort (push `("sort" . ,(symbol-string sort)) params))
-    (when time (push `("time" . ,time) params))
-    (when target (push `("target" . ,target) params))
     (push `("q" . ,query) params)
     (when params (setf url (format nil "~a?~a" url (build-get-params params))))
     (listing-children
@@ -208,12 +192,7 @@
 (defun get-comments (id user &key article comment context depth limit sort)
   "Gets comments for link id in subreddit sr."
   (let ((params nil))
-    (when sort (push `("sort" . ,sort) params))
-    (when limit (push `("limit" . ,limit) params))
-    (when depth (push `("depth" . ,depth) params))
-    (when context (push `("context" . ,context) params))
-    (when comment (push `("comment" . ,comment) params))
-    (when article (push `("article" . ,article) params))
+    (param-push sort limit depth context comment article)
     (let ((url (format nil "~a/comments/~a.json?~a" *reddit* id (build-get-params params))))
       (with-user (user)
         (butlast (listing-children (parse-json (second (get-json url user)))))))))
