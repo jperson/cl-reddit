@@ -340,7 +340,7 @@
       :subreddit (gethash "subreddit" json)
       :subreddit_id (gethash "subreddit_id" json)
       :replies (if (typep replies 'HASH-TABLE)
-                 (children (parse-json (gethash "replies" json)))
+                 (listing-children (parse-json (gethash "replies" json)))
                  nil))))
 ;      :replies replies)))
       ;:replies (first (children (parse-json (gethash "replies" json)))))))
