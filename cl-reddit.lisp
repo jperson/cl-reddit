@@ -131,24 +131,25 @@
       (if-user-with user
         (parse-json (get-json url))))))
 
+(defun %get-subreddit (sub user)
+  (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
+    (if-user-with user (parse-json (get-json url)))))
+
 (defun get-subreddit (sub &optional (user nil))
   "Gets json data for subreddit sub.  Optional user."
-  (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
-    (listing-children
-      (if-user-with user
-        (parse-json (get-json url))))))
+  (listing-children (%get-subreddit sub user)))
 
 (defun get-subreddit-new (sub &optional user)
   "Gets json data for /r/<sub>/new. Optional user."
-  (get-subreddit (format nil "~a/new.json" sub) user))
+  (get-subreddit (format nil "~a/new" sub) user))
 
 (defun get-subreddit-top (sub &optional user)
   "Gets json data for top posts in subreddit sub. Optional user usr."
-  (get-subreddit (format nil "~a/top.json" sub) user))
+  (get-subreddit (format nil "~a/top" sub) user))
 
 (defun get-subreddit-about (sub &optional user)
   "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user usr."
-  (get-subreddit (format nil "~a/about.json" sub) user))
+  (%get-subreddit (format nil "~a/about" sub) user))
 
 (defun get-subscribed (user)
   "Gets subscribed subreddits"

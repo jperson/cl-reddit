@@ -43,10 +43,10 @@
 
 (defclass listing ()
   ((before
-     :initarg :before :initform "" :accessor listing-before :type string
+     :initarg :before :initform "" :accessor listing-before :type (or null string)
      :documentation "The fullname of the listing that follows before this page")
    (after
-     :initarg :after :initform "" :accessor listing-after :type string
+     :initarg :after :initform "" :accessor listing-after :type (or null string)
      :documentation "The fullname of the listing that follows after this page")
    (modhash
      :initarg :modhash :initform "" :accessor listing-modhash :type string
@@ -114,9 +114,9 @@
   (author
     :initarg :author :initform "" :accessor link-author :type string
     :documentation "The account name of the poster")
-  (author_flair_css_class :initarg author_flair_css_class :initform "" :accessor link-author_flair_css_class :type string
+  (author_flair_css_class :initarg author_flair_css_class :initform "" :accessor link-author_flair_css_class :type (or null string)
     :documentation "The css class of the author's flair")
-  (author_flair_text :initarg :author_flair_text :initform "" :accessor link-author_flair_text :type string
+  (author_flair_text :initarg :author_flair_text :initform "" :accessor link-author_flair_text :type (or null string)
     :documentation "The text of the author's flair")
   (clicked :initarg :clicked :initform nil :accessor link-clicked :type boolean
     :documentation "Probably always returns false")
@@ -144,7 +144,7 @@
   (selftext
     :initarg :selftext :initform "" :accessor link-selftext :type string
     :documentation "The raw text")
-  (selfttext_html :initarg :selftext_html :initform "" :accessor link-selftext_html :type string
+  (selfttext_html :initarg :selftext_html :initform "" :accessor link-selftext_html :type (or null string)
     :documentation "The formatted escaped html text")
   (subreddit
     :initarg :subreddit :initform "" :accessor link-subreddit :type string)
@@ -157,7 +157,7 @@
   (url
     :initarg :url :initform "" :accessor link-url :type string
     :documentation "The link of this post")
-  (edited :initarg :edited :initform 0 :accessor link-edited :type integer
+  (edited :initarg :edited :initform 0 :accessor link-edited :type (or null integer)
     :documentation "Indicates if link has been edited")))
 
 (defclass subreddit (created)
@@ -171,7 +171,7 @@
     :initarg :subscribers :initform 0 :accessor subreddit-subscribers :type integer
     :documentation "The number of users subscribed to this subreddit")
   (header_size
-    :initarg :header_size :initform 0 :accessor subreddit-header_size :type integer)
+    :initarg :header_size :initform 0 :accessor subreddit-header_size :type list)
   (over18
     :initarg :over18 :initform nil :accessor subreddit-over18 :type boolean)
   (accounts_active
@@ -183,7 +183,7 @@
   (description_html
     :initarg :description_html :initform "" :accessor subreddit-description_html :type string)
   (header_title
-    :initarg :header_title :initform "" :accessor subreddit-header_title :type string)
+    :initarg :header_title :initform "" :accessor subreddit-header_title :type (or null string))
   (header_img
     :initarg :header_img :initform "" :accessor subreddit-header_img :type string)
   (title
@@ -267,6 +267,9 @@
    (logged-in
      :initarg :logged-in :initform nil :accessor user-logged-in)))
 
+(defun maybe-round (x)
+  (and x (round x)))
+
 ;; json to thing constructors
 (defun link-from-json (json)
   (make-instance
@@ -276,8 +279,8 @@
     :ups (gethash "ups" json)
     :downs (gethash "downs" json)
     :likes (gethash "likes" json)
-    :created (gethash "created" json)
-    :created_utc (gethash "created_utc" json)
+    :created (maybe-round (gethash "created" json))
+    :created_utc (maybe-round (gethash "created_utc" json))
     :author (gethash "author" json)
     ;:author_flair_css_class (gethash "author_flair_css_class" json)
     :author_flair_text (gethash "author_flair_text" json)
@@ -299,7 +302,7 @@
     :thumbnail (gethash "thumbnail" json)
     :title (gethash "title" json)
     :url (gethash "url" json)
-    :edited (gethash "edited" json)))
+    :edited (maybe-round (gethash "edited" json))))
 
 (defun subreddit-from-json (json)
   (make-instance
@@ -312,8 +315,8 @@
     :over18 (gethash "over18" json)
     :accounts_active (gethash "accounts_active" json)
     :public_description (gethash "public_description" json)
-    :created_utc (gethash "created_utc" json)
-    :created (gethash "created" json)
+    :created_utc (maybe-round (gethash "created_utc" json))
+    :created (maybe-round (gethash "created" json))
     :url (gethash "url" json)
     :title (gethash "title" json)
     :description_html (gethash "description_html" json)
@@ -349,8 +352,8 @@
   (make-instance
     'account
     :comment_karma (gethash "comment_karma" json)
-    :created (gethash "created" json)
-    :created_utc (gethash "created_utc" json)
+    :created (maybe-round (gethash "created" json))
+    :created_utc (maybe-round (gethash "created_utc" json))
     :has_mail (gethash "has_mail" json)
     :has_mod_mail (gethash "has_mod_mail" json)
     :id (gethash "id" json)
