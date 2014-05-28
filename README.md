@@ -21,7 +21,7 @@ CL-REDDIT> (loop for l in lst do (format t "~a:~a~%" (link-score l) (link-title 
 Search can take several optional parameters, to search restricted to a particular subreddit
 
 ```cl
-CL-REDDIT> (defvar lst (get-search "Lance Armstrong" :sub "funny" :restrict_sr t))
+CL-REDDIT> (defvar lst (get-search "Lance Armstrong" :sub "funny" :restrict-sr t))
 ```
 
 API
@@ -119,7 +119,7 @@ All key params are required for api-* functions generated from def-post-api macr
 (defun get-subreddit-about (sub &optional user)
   "Gets r/<sub>/about.json. Returns Subreddit object about sub. Optional user.")
 
-(defun get-search (query &key user after before count limit restrict_sr show sort syntax time target sub)
+(defun get-search (query &key user after before count limit restrict-sr show sort syntax time target sub)
   "Search for query.")
 ```
 
