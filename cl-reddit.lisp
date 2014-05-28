@@ -2,13 +2,13 @@
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met: 
+;; modification, are permitted provided that the following conditions are met:
 ;;
 ;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer. 
+;;    list of conditions and the following disclaimer.
 ;; 2. Redistributions in binary form must reproduce the above copyright notice,
 ;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution. 
+;;    and/or other materials provided with the distribution.
 ;;
 ;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -22,7 +22,7 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;
 ;; The views and conclusions contained in the software and documentation are those
-;; of the authors and should not be interpreted as representing official policies, 
+;; of the authors and should not be interpreted as representing official policies,
 ;; either expressed or implied, of the FreeBSD Project.
 (in-package #:cl-reddit)
 
@@ -119,7 +119,7 @@
 
 (defun get-username-available (username)
   "Check if a username is available."
-  (let ((url (format nil "~a/api/username_available.json~a" 
+  (let ((url (format nil "~a/api/username_available.json~a"
                      *reddit* (build-get-params `(("u" . ,username))))))
     (parse-json (get-json url))))
 
@@ -127,14 +127,14 @@
 (defun get-reddit (&optional (user nil))
   "Gets json data for reddit home page. Optional user."
   (let ((url (format nil "~a/.json" *reddit*)))
-    (listing-children 
-      (if-user-with user 
+    (listing-children
+      (if-user-with user
         (parse-json (get-json url))))))
 
 (defun get-subreddit (sub &optional (user nil))
   "Gets json data for subreddit sub.  Optional user."
   (let ((url (format nil "~a/r/~a.json" *reddit* sub)))
-    (listing-children 
+    (listing-children
       (if-user-with user
         (parse-json (get-json url))))))
 
@@ -154,7 +154,7 @@
   "Gets subscribed subreddits"
   (let ((url (format nil "~a/reddits/mine.json" *reddit*)))
     (with-user (user)
-      (listing-children 
+      (listing-children
         (parse-json (get-json url user))))))
 
 (defun get-reddits-mine (user &key (where 'subscriber) after before count limit show target)
@@ -164,7 +164,7 @@
         (params))
     (param-push after before count limit show target)
     (with-user (user)
-      (listing-children 
+      (listing-children
         (parse-json (get-json url user))))))
 
 (defun get-reddits-where (user &key (where 'new) after before count limit show target)
@@ -174,7 +174,7 @@
         (params))
     (param-push after before count limit show target)
     (with-user (user)
-      (listing-children 
+      (listing-children
         (parse-json (get-json url user))))))
 
 (defun get-search (query &key user after before count limit restrict-sr show sort syntax time target sub)

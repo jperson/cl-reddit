@@ -2,13 +2,13 @@
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met: 
+;; modification, are permitted provided that the following conditions are met:
 ;;
 ;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer. 
+;;    list of conditions and the following disclaimer.
 ;; 2. Redistributions in binary form must reproduce the above copyright notice,
 ;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution. 
+;;    and/or other materials provided with the distribution.
 ;;
 ;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -22,33 +22,33 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;
 ;; The views and conclusions contained in the software and documentation are those
-;; of the authors and should not be interpreted as representing official policies, 
+;; of the authors and should not be interpreted as representing official policies,
 ;; either expressed or implied, of the FreeBSD Project.
 (in-package #:cl-reddit)
 
 ;; Base classes
 (defclass thing ()
-  ((id      
+  ((id
     :initarg :id :initform "" :accessor thing-id :type string
      :documentation "This item's identifiler, e.g. 8xwlg")
-   (name    
+   (name
     :initarg :name :initform "" :accessor thing-name :type string
      :documentation "Fullname of comment, e.g. t1_c3v7f8u")
-   (kind    
+   (kind
     :initarg :kind :initform "" :accessor thing-kind :type string
      :documentation "String identifier that denotes the object's type")
-   (data    
+   (data
      :initarg :data :initform nil :accessor thing-data
      :documentation "Custom data structure")))
 
 (defclass listing ()
-  ((before  
+  ((before
      :initarg :before :initform "" :accessor listing-before :type string
      :documentation "The fullname of the listing that follows before this page")
-   (after   
+   (after
      :initarg :after :initform "" :accessor listing-after :type string
      :documentation "The fullname of the listing that follows after this page")
-   (modhash 
+   (modhash
      :initarg :modhash :initform "" :accessor listing-modhash :type string
      :documentation "Modhash value for this listing")
    (children
@@ -56,20 +56,20 @@
      :documentation "A list of things that this listing wraps")))
 
 (defclass volatile ()
-  ((ups     
+  ((ups
      :initarg :ups :initform 0 :accessor volatile-ups :type integer
      :documentation "The number of upvotes")
-   (downs   
+   (downs
      :initarg :downs :initform 0 :accessor volatile-downs :type integer
      :documentation "The number of downvotes")
-   (likes   
+   (likes
      :initarg :likes :initform nil :accessor volatile-likes
      :documentation "True if liked by user, false if disliked, nil if user neutral")))
 
 (defclass created ()
-  ((created     
+  ((created
      :initarg :created :initform 0 :accessor created-created)
-   (created_utc 
+   (created_utc
      :initarg :created_utc :initform 0 :accessor created-created_utc)))
 
 ;; Datastructures
@@ -80,7 +80,7 @@
    (name
      :initarg :name :initform "" :accessor comment-name :type string
      :documentation "The name of the comment.")
-   (author 
+   (author
      :initarg :author :initform nil :accessor comment-author :type string
      :documentation "The account name of the poster")
    (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor comment-author_flair_css_class :type string
@@ -91,13 +91,13 @@
      :documentation "The raw text")
    (body_html :initarg :body_html :initform "" :accessor comment-body_html :type string
      :documentation "The formatted html text")
-   (link_id 
+   (link_id
      :initarg :link_id :initform "" :accessor comment-link_id :type string)
-   (parent_id 
+   (parent_id
      :initarg :parent_id :initform "" :accessor comment-parent_id :type string)
-   (subreddit 
+   (subreddit
      :initarg :subreddit :initform "" :accessor comment-subreddit :type string)
-   (subreddit_id 
+   (subreddit_id
      :initarg :subreddit_id :initform "" :accessor comment-subreddit_id :type string)
    (replies
      :initarg :replies :initform nil :accessor comment-replies
@@ -146,49 +146,49 @@
     :documentation "The raw text")
   (selfttext_html :initarg :selftext_html :initform "" :accessor link-selftext_html :type string
     :documentation "The formatted escaped html text")
-  (subreddit 
+  (subreddit
     :initarg :subreddit :initform "" :accessor link-subreddit :type string)
-  (subreddit_id 
+  (subreddit_id
     :initarg :subreddit_id :initform "" :accessor link-subreddit_id :type string)
   (thumbnail :initarg :thumbnail :initform "" :accessor link-thumbnail :type string
     :documentation "Full url to the thumbnail for this link")
-  (title 
+  (title
     :initarg :title :initform "" :accessor link-title :type string)
-  (url 
+  (url
     :initarg :url :initform "" :accessor link-url :type string
     :documentation "The link of this post")
   (edited :initarg :edited :initform 0 :accessor link-edited :type integer
     :documentation "Indicates if link has been edited")))
 
 (defclass subreddit (created)
- ((name 
+ ((name
     :initarg :name :initform "" :accessor subreddit-name :type string)
-  (id 
+  (id
     :initarg :id :initform "" :accessor subreddit-id :type string)
-  (display_name 
+  (display_name
     :initarg :display_name :initform "" :accessor subreddit-display_name :type string)
-  (subscribers 
+  (subscribers
     :initarg :subscribers :initform 0 :accessor subreddit-subscribers :type integer
     :documentation "The number of users subscribed to this subreddit")
-  (header_size 
+  (header_size
     :initarg :header_size :initform 0 :accessor subreddit-header_size :type integer)
-  (over18 
+  (over18
     :initarg :over18 :initform nil :accessor subreddit-over18 :type boolean)
-  (accounts_active 
+  (accounts_active
     :initarg :accounts_active :initform 0 :accessor subreddit-accounts_active :type integer)
-  (public_description 
+  (public_description
     :initarg :public_description :initform "" :accessor subreddit-public_description :type string)
-  (description 
+  (description
     :initarg :description :initform "" :accessor subreddit-description :type string)
-  (description_html 
+  (description_html
     :initarg :description_html :initform "" :accessor subreddit-description_html :type string)
-  (header_title 
+  (header_title
     :initarg :header_title :initform "" :accessor subreddit-header_title :type string)
-  (header_img 
+  (header_img
     :initarg :header_img :initform "" :accessor subreddit-header_img :type string)
-  (title 
+  (title
     :initarg :title :initform "" :accessor subreddit-title :type string)
-  (url 
+  (url
     :initarg :url :initform "" :accessor subreddit-url :type string
     :documentation "The relative URL of the subreddit")))
 
@@ -339,7 +339,7 @@
       :parent_id (gethash "parent_id" json)
       :subreddit (gethash "subreddit" json)
       :subreddit_id (gethash "subreddit_id" json)
-      :replies (if (typep replies 'HASH-TABLE) 
+      :replies (if (typep replies 'HASH-TABLE)
                  (children (parse-json (gethash "replies" json)))
                  nil))))
 ;      :replies replies)))
@@ -377,15 +377,15 @@
     :was_comment (gethash "was_comment" json)))
 
 (defun listing-from-json (json)
-  (make-instance 
-    'listing 
+  (make-instance
+    'listing
     :before (gethash "before" json)
     :after (gethash "after" json)
     :modhash (gethash "modhash" json)
     :children (map 'list #'parse-json (gethash "children" json))))
 
 (defun more-from-json (json)
-  (make-instance 
+  (make-instance
     'more
     :cnt (gethash "count" json)
     :parent_id (gethash "parent_id" json)
@@ -397,7 +397,7 @@
   (labels ((thing-from-json (json)
                (let ((kind (gethash "kind" json))
                      (data (gethash "data" json)))
-                 (alexandria:switch (kind :test #'EQUAL) 
+                 (alexandria:switch (kind :test #'EQUAL)
                    ("t1" (comment-from-json data))
                    ("t2" (account-from-json data))
                    ("t3" (link-from-json data))
@@ -406,6 +406,6 @@
                    ("Listing" (listing-from-json data))
                    ("more" (more-from-json data))
                    (otherwise (make-instance 'thing :kind kind :data data))))))
-    (if (listp data) 
-      (loop for d in data collect (thing-from-json d)) 
+    (if (listp data)
+      (loop for d in data collect (thing-from-json d))
       (thing-from-json data))))
