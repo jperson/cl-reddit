@@ -187,7 +187,7 @@
     (push `("q" . ,query) params)
     (when params (setf url (format nil "~a?~a" url (build-get-params params))))
     (listing-children
-      (if-user-with user (parse-json (get-json url user))))))
+      (if-user-with user (parse-json (get-json url))))))
 
 (defun get-comments (id user &key article comment context depth limit sort)
   "Gets comments for link id in subreddit sr."
