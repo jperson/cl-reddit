@@ -157,7 +157,7 @@
   (url
     :initarg :url :initform "" :accessor link-url :type string
     :documentation "The link of this post")
-  (edited :initarg :edited :initform 0 :accessor link-edited :type (or null integer)
+  (edited :initarg :edited :initform 0 :accessor link-edited :type (or boolean integer)
     :documentation "Indicates if link has been edited")))
 
 (defclass subreddit (created)
@@ -268,7 +268,9 @@
      :initarg :logged-in :initform nil :accessor user-logged-in)))
 
 (defun maybe-round (x)
-  (and x (round x)))
+  (typecase x
+    (number (round x))
+    (t x)))
 
 ;; json to thing constructors
 (defun link-from-json (json)
