@@ -26,13 +26,6 @@
 ;; either expressed or implied, of the FreeBSD Project.
 (in-package #:cl-reddit)
 
-;;url escapes
-(eval-when (:execute :load-toplevel :compile-toplevel)
-(defparameter *escape* '(#\$ #\& #\+ #\, #\/ #\: #\; #\= #\? #\@ #\space #\" #\< #\> #\# #\% #\{ #\} #\| #\\ #\^ #\~ #\[ #\] #\`))
-(defparameter *user-agent* "cl-reddit/0.2 (common lisp api wrapper)")
-(defparameter *reddit* "http://www.reddit.com")
-)
-
 ;;;; URL helper functions ;;;;
 (defmacro encode-param (x)
   "Encodes get params"

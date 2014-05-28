@@ -1,4 +1,4 @@
-;; Copyright (c) 2012, Jason R. Person
+;; Copyright (c) 2013, Jason R. Person
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -24,15 +24,9 @@
 ;; The views and conclusions contained in the software and documentation are those
 ;; of the authors and should not be interpreted as representing official policies,
 ;; either expressed or implied, of the FreeBSD Project.
+(in-package #:cl-reddit)
 
-;;;; cl-reddit.asd
-(asdf:defsystem #:cl-reddit
-  :serial t
-  :depends-on (#:drakma
-               #:yason)
-  :components ((:file "package")
-               (:file "globals")
-               (:file "util")
-               (:file "url")
-               (:file "datatypes")
-               (:file "cl-reddit")))
+;;url escapes
+(defparameter *escape* '(#\$ #\& #\+ #\, #\/ #\: #\; #\= #\? #\@ #\space #\" #\< #\> #\# #\% #\{ #\} #\| #\\ #\^ #\~ #\[ #\] #\`))
+(defparameter *user-agent* "cl-reddit/0.2 (common lisp api wrapper)")
+(defparameter *reddit* "http://www.reddit.com")
