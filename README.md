@@ -56,7 +56,7 @@ All key params are required for api-* functions generated from def-post-api macr
 (defun api-marknsfw (user &key id)
   "Mark thing with id as nsfw.")
 
-(defun api-hide (uesr &key id)
+(defun api-hide (user &key id)
   "Hide thing with id.")
 
 (defun api-unhide (user &key id)
