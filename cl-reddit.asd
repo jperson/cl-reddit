@@ -27,6 +27,10 @@
 
 ;;;; cl-reddit.asd
 (asdf:defsystem #:cl-reddit
+  :version "0.1"
+  :author "Jason Person"
+  :license "BSD"
+  :description "Reddit client api library"
   :serial t
   :depends-on (#:drakma
                #:yason)
