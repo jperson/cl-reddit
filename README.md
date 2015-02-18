@@ -144,6 +144,8 @@ the request if too many have been sent in a short time.
 
 * Better return types - Some of the methods return a hash table or a listing, see (cl-reddit:get-user), which doesn't always make sense.
 
+* Use OAuth - See https://github.com/jperson/cl-reddit/issues/8
+
 * Tests - It would be nice to have a test suite with lots of api coverage, maybe using a unit test framework.
 
 * More documentation - What project couldn't use this?
