@@ -80,11 +80,14 @@
           `(,@then ,user)))
      (,@then)))
 
-(defmacro api-post-generic (url user &key subreddit action id thing-id text vote spam flair-enabled)
+(defmacro api-post-generic (url user &key subreddit action id thing-id text vote spam flair-enabled sr kind title)
   "Defines generic post request"
   (let ((params (gensym)) (result (gensym)))
     `(let ((,params nil))
        ,(when subreddit `(push `("sr_name" . ,subreddit) ,params))
+       ,(when sr `(push `("sr" . ,sr) ,params))
+       ,(when kind `(push `("kind" . ,kind) ,params))
+       ,(when title `(push `("title" . ,title) ,params))
        ,(when action `(push `("action" . ,(symbol-string ,action)) ,params))
        ,(when id `(push `("id" . ,id) ,params))
        ,(when thing-id `(push `("thing_id" . ,thing-id) ,params))

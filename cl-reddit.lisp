@@ -92,6 +92,9 @@
 ; "Enable/disable flair."
 (def-post-api setflairenabled &key flair-enabled)
 
+"Submit link to subreddit sr with text and title, only works if user has enough karma to avoid captcha."
+(def-post-api submit &key sr kind text title)
+
 (defun api-me (user)
   "Get info for user usr.  Returns user data."
   (let ((url (format nil "~a/api/me.json" *reddit*)))
