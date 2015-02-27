@@ -43,6 +43,7 @@
            #:api-report
            #:api-marknsfw
            #:api-hide
+           #:api-submit
            #:api-unhide
            #:api-del
            #:api-block

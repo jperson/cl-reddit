@@ -62,6 +62,22 @@
 ; "Hide thing with id."
 (def-post-api hide &key id)
 
+(defun api-submit (user &key sr kind text title url)
+  "Submit a text or link post."
+  (let ((url (format nil "~a/api/submit" *reddit*))
+        (params (append
+                 (list (cons "api_type" "json"))
+                 (list (cons "uh" (user-modhash user)))
+                 (list (cons "sr" sr))
+                 (list (cons "kind" kind))
+                 (when text
+                   (list (cons "text" text)))
+                 (when title
+                   (list (cons "title" title)))
+                 (when url
+                   (list (cons "url" url))))))
+    (post-request url user params)))
+
 ; "Unhide thing with id."
 (def-post-api unhide &key id)
 
