@@ -2,6 +2,10 @@
 
 Common lisp reddit api wrapper
 
+**cl-reddit is now included in [quicklisp](http://github.com/quicklisp)**
+```cl
+* (ql:quickload "cl-reddit")
+```
 
 **Create user and login and view user modhash**
 
