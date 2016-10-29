@@ -330,6 +330,8 @@
   (let ((replies (gethash "replies" json)))
     (make-instance
       'comment
+      :created (gethash "created" json)
+      :created_utc (gethash "created_utc" json)
       :id (gethash "id" json)
       :name (gethash "name" json)
       :ups (gethash "ups" json)
