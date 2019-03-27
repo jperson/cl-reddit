@@ -336,7 +336,7 @@
       :name (gethash "name" json)
       :ups (gethash "ups" json)
       :downs (gethash "downs" json)
-      :likes (gethash "lieks" json)
+      :likes (gethash "likes" json)
       :author (gethash "author" json)
       :author_flair_css_class (gethash "author_flair_css_class" json)
       :author_flair_text (gethash "author_flair_text" json)
