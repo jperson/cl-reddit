@@ -81,9 +81,9 @@
      :initarg :name :initform "" :accessor comment-name :type string
      :documentation "The name of the comment.")
    (author
-     :initarg :author :initform nil :accessor comment-author :type string
+     :initarg :author :initform nil :accessor comment-author :type (or null string)
      :documentation "The account name of the poster")
-   (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor comment-author_flair_css_class :type string
+   (author_flair_css_class :initarg :author_flair_css_class :initform nil :accessor comment-author_flair_css_class :type (or null string)
      :documentation "The css class of the author's flair")
    (author_flair_text :initarg :author_flair_text :initform "" :accessor comment-author_flair_text :type string
      :documentation "The text of the author's flair")
@@ -171,7 +171,7 @@
     :initarg :subscribers :initform 0 :accessor subreddit-subscribers :type integer
     :documentation "The number of users subscribed to this subreddit")
   (header_size
-    :initarg :header_size :initform 0 :accessor subreddit-header_size :type list)
+    :initarg :header_size :initform 0 :accessor subreddit-header_size :type integer)
   (over18
     :initarg :over18 :initform nil :accessor subreddit-over18 :type boolean)
   (accounts_active
